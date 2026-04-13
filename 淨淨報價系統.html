@@ -253,6 +253,36 @@ async function checkAdmin(){
   alert('密碼錯誤，無法執行此操作。');
   return false;
 }
+// GitHub API 直接存檔（網頁版自動部署）
+// Token 存在 localStorage，不寫在原始碼中（安全）
+const _GH={user:'nini-lgtm',repo:'jj-quote',branch:'master'};
+function getGHToken(){return localStorage.getItem('jj_gh_token')||'';}
+function setGHToken(t){localStorage.setItem('jj_gh_token',t);}
+async function saveToGitHub(content){
+  let token=getGHToken();
+  if(!token){
+    token=prompt('首次使用 GitHub 自動部署，請輸入 GitHub Personal Access Token：\n\n（到 GitHub → Settings → Developer settings →\nFine-grained tokens 建立，\n只需給 jj-quote repo 的 Contents 讀寫權限）');
+    if(!token)throw new Error('未輸入 Token，取消部署');
+    setGHToken(token);
+  }
+  const api='https://api.github.com';
+  const path='data.js';
+  const headers={'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json','User-Agent':'jj-quote-deploy'};
+  let sha=null;
+  try{
+    const r=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path+'?ref='+_GH.branch,{headers});
+    if(r.ok){const j=await r.json();sha=j.sha;}
+  }catch(e){}
+  const b64=btoa(unescape(encodeURIComponent(content)));
+  const body={message:'更新報價資料 '+new Date().toLocaleString('zh-TW'),content:b64,branch:_GH.branch};
+  if(sha)body.sha=sha;
+  const r2=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path,{method:'PUT',headers,body:JSON.stringify(body)});
+  if(!r2.ok){
+    if(r2.status===401||r2.status===403){localStorage.removeItem('jj_gh_token');throw new Error('Token 無效或過期，請重新儲存時輸入新的 Token');}
+    const t=await r2.text();throw new Error('GitHub API 錯誤 '+r2.status+': '+t);
+  }
+  return true;
+}
 
 /* ===== Default Data ===== */
 const P0=[
@@ -331,7 +361,7 @@ useEffect(()=>{
   return()=>window.removeEventListener('beforeunload',handler);
 },[]);
 
-/* 儲存資料到外部檔案（data.js）- 支援直接覆蓋寫入，需管理員權限 */
+/* 儲存資料到外部檔案（data.js）- 支援直接覆蓋寫入 + GitHub 自動部署，需管理員權限 */
 const saveToFile=async()=>{
   // 先在使用者點擊的同步階段取得檔案句柄（避免 user gesture 過期）
   if(window.showOpenFilePicker && !_fileHandle){
@@ -348,26 +378,45 @@ const saveToFile=async()=>{
   if(!await checkAdmin())return;
   const data={p:products,c:combos,cl:clients,ev:events,savedAt:new Date().toISOString()};
   const content='// 淨淨報價系統 - 資料儲存檔\n// 此檔案由系統自動產生，請勿手動修改\n// 最後更新：'+new Date().toLocaleString('zh-TW')+'\nwindow.JJ_DATA = '+JSON.stringify(data,null,2)+';\n';
+  let localOk=false;
   // 優先使用 File System Access API（Chrome/Edge 支援）
   if(_fileHandle){
     try{
       const w=await _fileHandle.createWritable();
       await w.write(content);
       await w.close();
-      _unsaved=false;setSaved(true);
-      alert('✅ 資料已直接儲存到 data.js！\n重新整理瀏覽器即可載入最新資料。');
-      return;
+      localOk=true;
     }catch(e){
-      console.warn('寫入失敗，改用下載方式',e);
+      console.warn('本機寫入失敗',e);
       _fileHandle=null;
     }
   }
-  // 降級：傳統下載方式
-  const blob=new Blob([content],{type:'application/javascript;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='data.js';a.click();
-  _unsaved=false;setSaved(true);
-  alert('資料已儲存！\n\n⚠️ 重要：請將下載的「data.js」存到和「淨淨報價系統.html」同一個資料夾（報價單），覆蓋舊檔案。\n\n這樣下次開啟 HTML 時資料就會自動載入。');
+  // 同步推送到 GitHub Pages
+  let ghOk=false;
+  try{
+    await saveToGitHub(content);
+    ghOk=true;
+  }catch(e){
+    console.warn('GitHub 部署失敗',e);
+  }
+  // 結果提示
+  if(localOk&&ghOk){
+    _unsaved=false;setSaved(true);
+    alert('✅ 儲存完成！\n\n📁 本機 data.js 已更新\n🌐 網頁版已自動部署到 GitHub Pages\n⏳ 約 1-2 分鐘後網頁版生效');
+  }else if(ghOk){
+    _unsaved=false;setSaved(true);
+    alert('✅ 網頁版已自動部署到 GitHub Pages！\n⏳ 約 1-2 分鐘後生效\n\n（本機檔案未更新，如需本機也更新請重新選擇檔案）');
+  }else if(localOk){
+    _unsaved=false;setSaved(true);
+    alert('✅ 本機 data.js 已更新！\n\n⚠️ 網頁版部署失敗，請稍後再試或手動執行一鍵部署。');
+  }else{
+    // 都失敗，降級為下載
+    const blob=new Blob([content],{type:'application/javascript;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='data.js';a.click();
+    _unsaved=false;setSaved(true);
+    alert('資料已下載！\n\n⚠️ 自動部署失敗，請手動將 data.js 放到報價單資料夾，\n並執行「一鍵部署報價單.bat」更新網頁版。');
+  }
 };
 /* 匯出 JSON 備份 */
 const exportData=()=>{
