@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>淨淨報價管理系統</title>
+<script src="./data.js" onerror="window.JJ_DATA=null"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+*{font-family:'Noto Sans TC',sans-serif;box-sizing:border-box}
+body{background:#f0f7f8;margin:0}
+.ta{background:#3EBAC8;color:#fff}.ti{background:#e2f0f1;color:#3a7a82}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+input[type=number],input[type=text],input[type=date],select{border:1px solid #b8dfe3;border-radius:6px;padding:6px 10px;font-size:14px}
+input:focus,select:focus{border-color:#3EBAC8;outline:none;box-shadow:0 0 0 2px rgba(62,186,200,.25)}
+.bp{background:#3EBAC8;color:#fff;border-radius:8px;padding:8px 16px;font-weight:500;cursor:pointer;border:none}.bp:hover{background:#35A5B3}
+.bs{background:#f1f7f8;color:#2a6a72;border:1px solid #b8dfe3;border-radius:8px;padding:8px 16px;cursor:pointer}.bs:hover{background:#e2f0f1}
+.bd{background:#fee2e2;color:#dc2626;border:none;border-radius:8px;padding:6px 12px;cursor:pointer}
+.bg{background:#10b981;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:500;cursor:pointer}.bg:hover{background:#059669}
+.bw{background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:500;cursor:pointer}
+table{border-collapse:collapse;width:100%}
+th{background:#f0f9fa;color:#2a6a72;font-weight:500;font-size:13px;text-align:left;padding:10px 12px;border-bottom:2px solid #d0ecef;position:sticky;top:0;z-index:1}
+td{padding:8px 12px;border-bottom:1px solid #edf7f8;font-size:14px}
+tr:hover td{background:#f5fbfc}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:500}
+.tbl{background:#d4f3f7;color:#1a6a75}.tgr{background:#d1fae5;color:#065f46}.tyl{background:#fef3c7;color:#92400e}
+.mo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:50;display:flex;align-items:center;justify-content:center}
+.mc{background:#fff;border-radius:16px;padding:24px;max-width:800px;width:92%;max-height:85vh;overflow-y:auto}
+.sc{color:#fff;border-radius:12px;padding:16px 20px}
+.s1{background:linear-gradient(135deg,#2DA3B2,#3EBAC8)}.s2{background:linear-gradient(135deg,#2193b0,#5BBFCE)}
+.s3{background:linear-gradient(135deg,#11998e,#38ef7d)}.s4{background:linear-gradient(135deg,#f2994a,#f2c94c)}
+.ph{color:#059669;font-weight:600}.pm{color:#d97706;font-weight:600}.pl{color:#dc2626;font-weight:600}
+.bar-c{background:#f1f5f9;border-radius:4px;height:20px;overflow:hidden}
+.bar-f{height:100%;border-radius:4px;transition:width .3s}
+input[type=range]{width:100%;cursor:pointer}
+.ib{background:#f0f4f8;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;font-size:13px}
+.eh{background:#fffbeb}
+.ship-row td{background:#fff7ed!important;font-style:italic}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.save-banner{background:linear-gradient(90deg,#fef3c7,#fde68a);border:1px solid #f59e0b;border-radius:10px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+#lock-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#1a6a75,#3EBAC8);z-index:9999;display:flex;align-items:center;justify-content:center}
+#lock-box{background:#fff;border-radius:20px;padding:48px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);max-width:380px;width:90%}
+#lock-box h2{font-size:22px;color:#1A6A75;margin:0 0 6px}
+#lock-box p{font-size:13px;color:#94a3b8;margin:0 0 24px}
+#lock-box input{width:100%;padding:12px 16px;border:2px solid #d0ecef;border-radius:10px;font-size:16px;text-align:center;letter-spacing:4px;outline:none;box-sizing:border-box}
+#lock-box input:focus{border-color:#3EBAC8;box-shadow:0 0 0 3px rgba(62,186,200,.2)}
+#lock-box .err{color:#dc2626;font-size:13px;margin-top:10px;min-height:20px}
+#lock-box button{margin-top:16px;width:100%;padding:12px;background:linear-gradient(135deg,#1a6a75,#3EBAC8);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}
+#lock-box button:hover{opacity:.9}
+</style>
+</head>
+<body>
+<div id="lock-screen">
+<div id="lock-box">
+<div style="font-size:40px;margin-bottom:12px">&#128274;</div>
+<h2>淨淨報價管理系統</h2>
+<p>請輸入密碼以進入系統</p>
+<input type="password" id="pw-input" placeholder="請輸入密碼" autofocus onkeydown="if(event.key==='Enter')checkPw()"/>
+<div class="err" id="pw-err"></div>
+<button onclick="checkPw()">進入系統</button>
+</div>
+</div>
+<script>
+// 密碼用 SHA-256 雜湊驗證，原始碼完全看不到明文密碼
+async function sha256(str){
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+}
+var _H='35f0fe053efba23746502e427f547856d115174e27c4c1e564f8e050a77f328c';
+async function checkPw(){
+  var pw=document.getElementById('pw-input').value;
+  var h=await sha256(pw);
+  if(h===_H){
+    document.getElementById('lock-screen').style.display='none';
+    sessionStorage.setItem('jj_unlocked','1');
+  }else{
+    document.getElementById('pw-err').textContent='密碼錯誤，請重新輸入';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+if(sessionStorage.getItem('jj_unlocked')==='1'){
+  document.getElementById('lock-screen').style.display='none';
+}
+</script>
+<div id="root"></div>
+<script>
+// 下載功能 — HTML 表格匯出 Excel（穩定可靠）
+// mode: 'full' = 完整版, 'vendor' = 廠商版（隱藏淨淨內部欄位）
+(function(){
+var N=function(n){return n==null||isNaN(n)?'-':Math.round(n).toLocaleString()};
+var P=function(n){return n==null||isNaN(n)||!isFinite(n)?'-':(n*100).toFixed(1)+'%'};
+var hd='background:#1A6A75;color:#fff;font-weight:bold;padding:8px 12px;border:1px solid #c0d8dc;font-size:12px;text-align:center';
+var td0='padding:6px 10px;border:1px solid #e2e8f0;font-size:12px';
+var alt='background:#EDF5F7';
+var pC=function(v){return v>=0?'color:#059669;font-weight:bold':'color:#dc2626;font-weight:bold'};
+
+function makeEvDetail(ev,isV){
+  var rows=ev.rows||[];if(!rows.length)return '';
+  var cols=isV?7:11;
+  var h='<table style="border-collapse:collapse;width:100%;margin-top:24px">';
+  h+='<tr><td colspan="'+cols+'" style="padding:14px 0 6px;border:none"><b style="font-size:14px;color:#1A6A75">'+
+    (ev.name||'')+' — 報價明細</b><br><span style="font-size:11px;color:#64748b">'+
+    (ev.client||'')+(ev.commission>0?' · 分潤'+(ev.commission*100).toFixed(0)+'%':'')+' ｜ '+(ev.date||'')+'</span></td></tr>';
+  // 摘要
+  if(isV){
+    h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
+    h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
+    h+='<td colspan="2" style="border:none;padding:6px"></td></tr>';
+  }else{
+    h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
+    h+='<td colspan="3" style="border:none;padding:6px;'+pC(ev.totalProfit)+'"><b>利潤</b> $'+N(ev.totalProfit)+'</td>';
+    h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
+    h+='<td colspan="3" style="border:none;padding:6px"><b>毛利率</b> '+P(ev.totalMargin)+'</td></tr>';
+  }
+  // 表頭
+  h+='<tr>';
+  if(isV){
+    ['品項','組數','官網價','直播價','進貨價','廠商利潤','廠商毛利'].forEach(function(t){h+='<th style="'+hd+'">'+t+'</th>'});
+  }else{
+    ['品項','組數','官網價','直播價','進貨價','廠商利潤','廠商毛利','淨淨營業額','淨淨成本','淨淨利潤','毛利率'].forEach(function(t){h+='<th style="'+hd+'">'+t+'</th>'});
+  }
+  h+='</tr>';
+  rows.forEach(function(r,i){
+    var c=r.calc||{};var bg=i%2===0?alt:'';
+    h+='<tr style="'+(bg?bg:'')+'">'+
+    '<td style="'+td0+';font-weight:bold">'+(c.name||'')+'</td>'+
+    '<td style="'+td0+';text-align:center">'+r.qty+'</td>'+
+    '<td style="'+td0+';text-align:right">$'+N(c.retail)+'</td>'+
+    '<td style="'+td0+';text-align:right">$'+N(c.lp)+'</td>'+
+    '<td style="'+td0+';text-align:right;font-weight:bold">$'+N(c.cp)+'</td>'+
+    '<td style="'+td0+';text-align:right;'+pC(c.vendorProfit)+'">$'+N(c.vendorProfit)+'</td>'+
+    '<td style="'+td0+';text-align:center">'+P(c.vendorMargin)+'</td>';
+    if(!isV){
+      h+='<td style="'+td0+';text-align:right">$'+N(c.netRevenue)+'</td>'+
+      '<td style="'+td0+';text-align:right">$'+N(c.totalCost)+'</td>'+
+      '<td style="'+td0+';text-align:right;'+pC(c.netProfit)+'">$'+N(c.netProfit)+'</td>'+
+      '<td style="'+td0+';text-align:center">'+P(c.netMargin)+'</td>';
+    }
+    h+='</tr>';
+  });
+  h+='</table>';return h;
+}
+
+window._dlXlsx=function(evList,fileName,mode){
+  mode=mode||'full';
+  var isV=(mode==='vendor');
+  var totR=0,totP=0,totS=0,totC=0;
+  evList.forEach(function(e){totR+=(e.totalRevenue||0);totP+=(e.totalProfit||0);totS+=(e.shipping||0);totC+=(e.totalCost||0)});
+
+  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">'+
+  '<head><meta charset="utf-8">'+
+  '<style>td,th{mso-number-format:"\\@"}body{font-family:"微軟正黑體",Arial,sans-serif;font-size:12px}</style>'+
+  '</head><body>'+
+  '<div style="padding:16px 0 8px">'+
+  '<span style="font-size:20px;font-weight:bold;color:#1A6A75">淨淨 Clean Clean</span>'+
+  '<span style="font-size:18px;color:#1A6A75;margin-left:10px">'+(isV?'報價明細':'報價總表')+'</span></div>'+
+  '<div style="font-size:12px;color:#64748b;margin-bottom:12px">匯出日期：'+new Date().toLocaleDateString('zh-TW')+' ｜ 共 '+evList.length+' 場'+(isV?' ｜ 廠商版':'')+'</div>';
+
+  // 摘要卡片
+  html+='<table style="margin-bottom:16px"><tr>';
+  html+='<td style="padding:8px 20px;background:#f0f7f8"><div style="font-size:10px;color:#64748b">累計營業額</div><div style="font-size:18px;font-weight:bold;color:#1A6A75">$'+N(totR)+'</div></td>';
+  if(!isV){
+    html+='<td style="padding:8px 20px;background:#f0fdf4"><div style="font-size:10px;color:#64748b">累計利潤</div><div style="font-size:18px;font-weight:bold;'+pC(totP)+'">$'+N(totP)+'</div></td>';
+  }
+  html+='<td style="padding:8px 20px;background:#fffbeb"><div style="font-size:10px;color:#64748b">累計運費</div><div style="font-size:18px;font-weight:bold">$'+N(totS)+'</div></td>';
+  if(!isV){
+    html+='<td style="padding:8px 20px;background:#fef2f2"><div style="font-size:10px;color:#64748b">平均毛利率</div><div style="font-size:18px;font-weight:bold">'+P(totR>0?totP/totR:0)+'</div></td>';
+  }
+  html+='</tr></table>';
+
+  // 場次總表
+  html+='<table style="border-collapse:collapse;width:100%"><tr>';
+  if(isV){
+    ['場次名稱','廠商','日期','營業額','運費'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
+  }else{
+    ['場次名稱','廠商','日期','分潤','營業額','總成本','運費','利潤','毛利率'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
+  }
+  html+='</tr>';
+  evList.forEach(function(e,i){
+    var bg=i%2===0?alt:'';
+    html+='<tr style="'+(bg?bg:'')+'">'+
+    '<td style="'+td0+';font-weight:bold">'+(e.name||'')+'</td>'+
+    '<td style="'+td0+'">'+(e.client||'')+'</td>'+
+    '<td style="'+td0+'">'+(e.date||'')+'</td>';
+    if(!isV){
+      html+='<td style="'+td0+';text-align:center">'+(e.commission>0?(e.commission*100).toFixed(0)+'%':'—')+'</td>';
+    }
+    html+='<td style="'+td0+';text-align:right">$'+N(e.totalRevenue)+'</td>';
+    if(!isV){
+      html+='<td style="'+td0+';text-align:right">$'+N(e.totalCost)+'</td>';
+    }
+    html+='<td style="'+td0+';text-align:right">$'+N(e.shipping||0)+'</td>';
+    if(!isV){
+      html+='<td style="'+td0+';text-align:right;'+pC(e.totalProfit)+'">$'+N(e.totalProfit)+'</td>'+
+      '<td style="'+td0+';text-align:center">'+P(e.totalMargin)+'</td>';
+    }
+    html+='</tr>';
+  });
+  html+='</table>';
+
+  // 每場明細
+  evList.forEach(function(ev){html+=makeEvDetail(ev,isV)});
+
+  html+='<div style="margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center">淨淨 Clean Clean 報價管理系統 · 自動產生</div>';
+  html+='</body></html>';
+
+  var blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileName+'.xls';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+};
+})();
+</script>
+<script type="text/babel">
+const{useState,useMemo,useEffect}=React;
+const $=n=>n==null||isNaN(n)?'-':Math.round(n).toLocaleString();
+const P=n=>n==null||isNaN(n)||!isFinite(n)?'-':(n*100).toFixed(1)+'%';
+const C=r=>!isFinite(r)||isNaN(r)?'':r>=.35?'ph':r>=.2?'pm':'pl';
+
+/* ===== 資料持久化（外部檔案 + localStorage 雙備份）===== */
+const SK='jj_quote_data_v3';
+// 讀取優先順序：localStorage → 外部 JJ_DATA → 預設值
+function LD(k,d){
+  try{
+    // 先試 localStorage
+    const s=localStorage.getItem(SK);
+    if(s){const o=JSON.parse(s);if(o[k]!==undefined && (Array.isArray(o[k])?o[k].length>0:true))return o[k]}
+    // 再試外部資料檔
+    if(window.JJ_DATA && window.JJ_DATA[k] && (Array.isArray(window.JJ_DATA[k])?window.JJ_DATA[k].length>0:true))return window.JJ_DATA[k];
+    return d;
+  }catch(e){return d}
+}
+function SV(k,v){try{const s=localStorage.getItem(SK);const o=s?JSON.parse(s):{};o[k]=v;localStorage.setItem(SK,JSON.stringify(o))}catch(e){}}
+// 標記是否有未儲存的變更
+let _unsaved=false;
+function markUnsaved(){_unsaved=true}
+// File System Access API - 儲存檔案句柄，實現直接覆蓋寫入
+let _fileHandle=null;
+// 管理員驗證（儲存/匯入需要密碼）
+let _admin=false;
+async function checkAdmin(){
+  if(_admin)return true;
+  const pw=prompt('此操作需要管理員權限，請輸入密碼：');
+  if(!pw)return false;
+  const h=await sha256(pw);
+  var _AH='bf56638f3c2a20c7f75ee1d07f0907042a6fe19c867fc9276611a6efcf8fcda8';
+  if(h===_AH){_admin=true;return true;}
+  alert('密碼錯誤，無法執行此操作。');
+  return false;
+}
+
+/* ===== Default Data ===== */
+const P0=[
+{id:1,name:'淨淨剋菌液500ML',cat:'剋菌液',retail:790,cp:310,cost:39.48},
+{id:2,name:'淨淨剋菌液300ML',cat:'剋菌液',retail:390,cp:180,cost:128.6},
+{id:3,name:'淨淨剋菌液100ML',cat:'剋菌液',retail:120,cp:60,cost:49},
+{id:4,name:'淨淨速效除垢慕斯 噴瓶',cat:'除垢',retail:390,cp:215,cost:101.64},
+{id:5,name:'淨淨速效除垢慕斯 補充瓶',cat:'除垢',retail:370,cp:190,cost:91.56},
+{id:6,name:'淨淨速效除垢慕斯 噴槍(獨賣)',cat:'除垢',retail:0,cp:0,cost:11.6},
+{id:7,name:'淨淨濃縮家事皂700ml',cat:'家事皂',retail:499,cp:270,cost:136.605},
+{id:8,name:'家事皂分裝 噴瓶',cat:'家事皂',retail:109,cp:60,cost:34.125},
+{id:9,name:'淨淨速效除黴凝膠',cat:'除黴',retail:270,cp:140,cost:82.425},
+{id:10,name:'淨淨食器清潔皂 壓頭瓶 500ml',cat:'食器',retail:360,cp:200,cost:118.23},
+{id:11,name:'淨淨食器清潔皂 補充瓶 500ml',cat:'食器',retail:330,cp:171,cost:106.365},
+{id:12,name:'淨淨食器清潔皂 隨身瓶 50ml',cat:'食器',retail:150,cp:80,cost:37.9},
+{id:13,name:'淨淨真濃縮洗衣精 壓頭瓶 800ml',cat:'洗衣精',retail:550,cp:290,cost:174},
+{id:14,name:'淨淨真濃縮洗衣精 補充瓶 800ml',cat:'洗衣精',retail:500,cp:230,cost:162},
+{id:15,name:'胺基酸沐浴慕斯 600mL 無香',cat:'沐浴',retail:750,cp:365,cost:236},
+{id:16,name:'胺基酸沐浴慕斯 600mL 棉花香',cat:'沐浴',retail:750,cp:365,cost:228},
+{id:17,name:'胺基酸沐浴慕斯 600mL 療癒花語',cat:'沐浴',retail:750,cp:365,cost:244},
+{id:18,name:'植潤水凝乳 300ml',cat:'護膚',retail:750,cp:400,cost:199.794},
+{id:19,name:'胺基酸沐浴露 500ml 棉花香',cat:'沐浴',retail:650,cp:275,cost:128},
+{id:20,name:'胺基酸沐浴露 500ml 療癒花語',cat:'沐浴',retail:650,cp:275,cost:141},
+{id:21,name:'無泡潔顏露 150ml',cat:'臉部',retail:550,cp:310,cost:113.7},
+{id:22,name:'潔顏慕斯 150ml',cat:'臉部',retail:450,cp:215,cost:99},
+{id:23,name:'潔顏乳 120ml',cat:'臉部',retail:370,cp:190,cost:98},
+{id:24,name:'胺基酸多效軟管牙膏(清涼薄荷) 150g',cat:'牙膏',retail:219,cp:100,cost:63},
+{id:25,name:'兒童胺基酸軟管牙膏(草莓)75g 含氟',cat:'牙膏',retail:189,cp:85,cost:66},
+{id:26,name:'兒童胺基酸軟管牙膏(葡萄)75g 含氟',cat:'牙膏',retail:189,cp:85,cost:66},
+{id:27,name:'兒童胺基酸軟管牙膏(草莓)75g 無氟',cat:'牙膏',retail:189,cp:85,cost:68},
+{id:28,name:'兒童胺基酸軟管牙膏(葡萄)75g 無氟',cat:'牙膏',retail:189,cp:85,cost:68},
+{id:29,name:'淨淨濕紙巾(70抽)/串',cat:'濕紙巾',retail:280,cp:145,cost:110},
+{id:30,name:'簡單柔濕巾15抽(5包/串)',cat:'濕紙巾',retail:155,cp:80,cost:52.5},
+];
+const C0=[
+{id:1,name:'洗衣精2+2（壓頭+補充）',items:[{pid:13,qty:2},{pid:14,qty:2}],cp:1040,retail:2100},
+{id:2,name:'濕紙巾3+3串',items:[{pid:29,qty:3},{pid:30,qty:3}],cp:675,retail:1305},
+{id:3,name:'除垢3入組',items:[{pid:4,qty:3}],cp:645,retail:1170},
+{id:4,name:'洗衣精14瓶箱購(全壓頭)',items:[{pid:13,qty:14}],cp:4060,retail:7700},
+{id:5,name:'沐浴慕斯(棉花+花語)1+1',items:[{pid:16,qty:1},{pid:17,qty:1}],cp:730,retail:1500},
+{id:6,name:'沐浴露(棉花+花語)1+1',items:[{pid:19,qty:1},{pid:20,qty:1}],cp:550,retail:1300},
+{id:7,name:'剋菌液組合(500+300+100)',items:[{pid:1,qty:1},{pid:2,qty:1},{pid:3,qty:1}],cp:550,retail:1300},
+{id:8,name:'家事皂+噴瓶 2+1',items:[{pid:7,qty:2},{pid:8,qty:1}],cp:600,retail:1107},
+{id:9,name:'食器清潔皂 壓頭6入',items:[{pid:10,qty:6}],cp:1200,retail:2160},
+{id:10,name:'牙膏(清涼薄荷)6入',items:[{pid:24,qty:6}],cp:600,retail:1314},
+];
+const CL0=[
+{id:1,name:'阿清',commission:0,note:'固定合作'},
+{id:2,name:'Mei姊',commission:.32,note:'32%分潤'},
+];
+
+const TABS=['產品主表','組合設定','報價試算','數據分析','場次總表'];
+
+function App(){
+const[tab,setTab]=useState(0);
+const[products,_sP]=useState(()=>LD('p',P0));
+const[combos,_sC]=useState(()=>LD('c',C0));
+const[clients,_sCl]=useState(()=>LD('cl',CL0));
+const[events,_sE]=useState(()=>LD('ev',[]));
+const sP=v=>{const n=typeof v==='function'?v(products):v;_sP(n);SV('p',n);markUnsaved()};
+const sC=v=>{const n=typeof v==='function'?v(combos):v;_sC(n);SV('c',n);markUnsaved()};
+const sCl=v=>{const n=typeof v==='function'?v(clients):v;_sCl(n);SV('cl',n);markUnsaved()};
+const sE=v=>{const n=typeof v==='function'?v(events):v;_sE(n);SV('ev',n);markUnsaved()};
+const[saved,setSaved]=useState(true);
+const[dataSource,setDS]=useState(()=>{
+  try{const s=localStorage.getItem(SK);if(s){const o=JSON.parse(s);if(o.ev&&o.ev.length>0)return'localStorage'}
+  }catch(e){}
+  if(window.JJ_DATA&&window.JJ_DATA.ev&&window.JJ_DATA.ev.length>0)return'外部資料檔';
+  return'預設';
+});
+
+// 離開頁面前提醒儲存
+useEffect(()=>{
+  const handler=e=>{if(_unsaved){e.preventDefault();e.returnValue=''}};
+  window.addEventListener('beforeunload',handler);
+  return()=>window.removeEventListener('beforeunload',handler);
+},[]);
+
+/* 儲存資料到外部檔案（data.js）- 支援直接覆蓋寫入，需管理員權限 */
+const saveToFile=async()=>{
+  // 先在使用者點擊的同步階段取得檔案句柄（避免 user gesture 過期）
+  if(window.showOpenFilePicker && !_fileHandle){
+    try{
+      alert('請選擇報價單資料夾中現有的「data.js」檔案，\n之後每次儲存都會自動覆蓋該檔案。');
+      const [fh]=await window.showOpenFilePicker({types:[{description:'JavaScript',accept:{'application/javascript':['.js']}}]});
+      _fileHandle=fh;
+    }catch(e){
+      if(e.name==='AbortError')return;
+      console.warn('File System Access API 失敗，改用下載方式',e);
+    }
+  }
+  // 取得檔案句柄後再驗證管理員密碼
+  if(!await checkAdmin())return;
+  const data={p:products,c:combos,cl:clients,ev:events,savedAt:new Date().toISOString()};
+  const content='// 淨淨報價系統 - 資料儲存檔\n// 此檔案由系統自動產生，請勿手動修改\n// 最後更新：'+new Date().toLocaleString('zh-TW')+'\nwindow.JJ_DATA = '+JSON.stringify(data,null,2)+';\n';
+  // 優先使用 File System Access API（Chrome/Edge 支援）
+  if(_fileHandle){
+    try{
+      const w=await _fileHandle.createWritable();
+      await w.write(content);
+      await w.close();
+      _unsaved=false;setSaved(true);
+      alert('✅ 資料已直接儲存到 data.js！\n重新整理瀏覽器即可載入最新資料。');
+      return;
+    }catch(e){
+      console.warn('寫入失敗，改用下載方式',e);
+      _fileHandle=null;
+    }
+  }
+  // 降級：傳統下載方式
+  const blob=new Blob([content],{type:'application/javascript;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='data.js';a.click();
+  _unsaved=false;setSaved(true);
+  alert('資料已儲存！\n\n⚠️ 重要：請將下載的「data.js」存到和「淨淨報價系統.html」同一個資料夾（報價單），覆蓋舊檔案。\n\n這樣下次開啟 HTML 時資料就會自動載入。');
+};
+/* 匯出 JSON 備份 */
+const exportData=()=>{
+  const data={p:products,c:combos,cl:clients,ev:events,exportDate:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='淨淨報價資料_備份_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+};
+const importData=async()=>{
+  if(!await checkAdmin())return;
+  const input=document.createElement('input');input.type='file';input.accept='.json,.js';
+  input.onchange=e=>{const f=e.target.files[0];if(!f)return;
+    const reader=new FileReader();reader.onload=ev=>{
+      try{
+        let d;
+        const txt=ev.target.result;
+        if(txt.includes('window.JJ_DATA')){
+          // 從 .js 檔案解析
+          const match=txt.match(/window\.JJ_DATA\s*=\s*(\{[\s\S]*\});/);
+          if(match)d=JSON.parse(match[1]);
+        }else{d=JSON.parse(txt)}
+        if(!d)throw new Error('格式錯誤');
+        if(d.p&&d.p.length)sP(d.p);if(d.c&&d.c.length)sC(d.c);if(d.cl&&d.cl.length)sCl(d.cl);if(d.ev)sE(d.ev);
+        setSaved(true);_unsaved=false;
+        alert('資料匯入成功！共 '+(d.ev||[]).length+' 筆場次、'+(d.cl||[]).length+' 個客戶');
+      }catch(err){alert('匯入失敗：檔案格式錯誤')}
+    };reader.readAsText(f)};
+  input.click();
+};
+
+return(<div style={{minHeight:'100vh'}}>
+<header style={{background:'linear-gradient(135deg,#1a6a75,#3EBAC8)',padding:'20px 24px',color:'#fff'}}>
+<div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+<div style={{display:"flex",alignItems:"center",gap:12}}><img src="data:image/png;base64,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" style={{height:40,filter:"brightness(0) invert(1)"}}/><div><h1 style={{fontSize:22,fontWeight:700,margin:0}}>淨淨 報價管理系統</h1>
+<p style={{fontSize:13,opacity:.8,margin:'4px 0 0'}}>產品管理 · 組合設定 · 廠商報價 · 毛利分析</p></div></div>
+<div style={{display:'flex',gap:8,alignItems:'center'}}>
+{!saved&&<span style={{background:'#fbbf24',color:'#78350f',padding:'4px 10px',borderRadius:6,fontSize:12,fontWeight:600,animation:'pulse 2s infinite'}}>有未儲存的變更</span>}
+<button onClick={saveToFile} style={{background:'#10b981',color:'#fff',border:'none',borderRadius:8,padding:'8px 16px',cursor:'pointer',fontSize:13,fontWeight:600}}>&#128190; 儲存資料</button>
+<button onClick={importData} style={{background:'rgba(255,255,255,.15)',color:'#fff',border:'1px solid rgba(255,255,255,.3)',borderRadius:8,padding:'6px 14px',cursor:'pointer',fontSize:13}}>&#128194; 匯入資料</button>
+</div>
+</div></header>
+<nav style={{display:'flex',gap:4,padding:'12px 24px',background:'#fff',borderBottom:'1px solid #e2e8f0',flexWrap:'wrap'}}>
+{TABS.map((t,i)=><button key={i} onClick={()=>setTab(i)} className={tab===i?'ta':'ti'} style={{padding:'8px 18px',borderRadius:8,border:'none',cursor:'pointer',fontWeight:500,fontSize:14}}>{t}</button>)}
+</nav>
+<main style={{padding:'20px 24px',maxWidth:1500,margin:'0 auto'}}>
+{dataSource==='預設'&&events.length===0&&<div className="save-banner">
+<span style={{fontSize:20}}>&#9888;&#65039;</span>
+<div style={{flex:1}}>
+<div style={{fontWeight:600,color:'#92400e',marginBottom:2}}>尚未載入您的資料</div>
+<div style={{fontSize:13,color:'#78350f'}}>如果您之前有匯出過資料，請點右上角「匯入資料」載入。首次使用請先設定產品和客戶，完成後點「儲存資料」。</div>
+</div></div>}
+{tab===0&&<T1 products={products} sP={sP}/>}
+{tab===1&&<T2 combos={combos} sC={sC} products={products}/>}
+{tab===2&&<T3 products={products} combos={combos} clients={clients} sCl={sCl} events={events} sE={sE}/>}
+{tab===3&&<T4 products={products} combos={combos} events={events}/>}
+{tab===4&&<T5 events={events} sE={sE} products={products} combos={combos}/>}
+</main>
+</div>);
+}
+
+function F({l,children}){return <div><label style={{fontSize:12,color:'#64748b'}}>{l}</label><br/>{children}</div>}
+function Modal({title,onClose,w,children}){
+return(<div className="mo" onClick={onClose}><div className="mc" style={{maxWidth:w||800}} onClick={e=>e.stopPropagation()}>
+<h3 style={{fontSize:18,fontWeight:600,marginBottom:16}}>{title}</h3>
+{typeof children==='function'?children(onClose):children}
+</div></div>);
+}
+
+/* ==================== 1. 產品主表 ==================== */
+function T1({products,sP}){
+const[s,setS]=useState('');const[cf,setCf]=useState('全部');const[eid,setEid]=useState(null);const[ed,setEd]=useState({});const[sa,setSa]=useState(false);
+const cats=['全部',...new Set(products.map(p=>p.cat))];
+const fl=products.filter(p=>p.name.includes(s)&&(cf==='全部'||p.cat===cf));
+return(<div>
+<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:12}}>
+<div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap'}}>
+<input type="text" placeholder="&#128269; 搜尋產品..." value={s} onChange={e=>setS(e.target.value)} style={{width:220}}/>
+<select value={cf} onChange={e=>setCf(e.target.value)} style={{minWidth:120}}>{cats.map(c=><option key={c}>{c}</option>)}</select>
+</div>
+<button className="bp" onClick={()=>setSa(true)}>+ 新增產品</button>
+</div>
+<div className="card" style={{overflow:'auto'}}><table><thead><tr>
+<th>分類</th><th>產品名稱</th><th>定價</th><th>零售價</th><th style={{background:'#fff7ed'}}>經銷價</th><th style={{background:'#e6f7fa'}}>特約價</th><th style={{background:'#fef3c7'}}>特殊價</th><th>成本</th><th>毛利率(特殊)</th><th>操作</th>
+</tr></thead><tbody>
+{fl.map(p=>{const mg=p.sp>0?(p.sp-p.cost)/p.sp:0;
+if(eid===p.id)return(<tr key={p.id} style={{background:'#e6f7fa'}}>
+<td><input type="text" value={ed.cat} onChange={e=>setEd({...ed,cat:e.target.value})} style={{width:70}}/></td>
+<td><input type="text" value={ed.name} onChange={e=>setEd({...ed,name:e.target.value})} style={{width:180}}/></td>
+<td><input type="number" value={ed.retail} onChange={e=>setEd({...ed,retail:+e.target.value})} style={{width:70}}/></td>
+<td><input type="number" value={ed.rp} onChange={e=>setEd({...ed,rp:+e.target.value})} style={{width:70}}/></td>
+<td><input type="number" value={ed.dp} onChange={e=>setEd({...ed,dp:+e.target.value})} style={{width:70}}/></td>
+<td><input type="number" value={ed.cp} onChange={e=>setEd({...ed,cp:+e.target.value})} style={{width:70}}/></td>
+<td><input type="number" value={ed.sp} onChange={e=>setEd({...ed,sp:+e.target.value})} style={{width:70}}/></td>
+<td><input type="number" step=".01" value={ed.cost} onChange={e=>setEd({...ed,cost:+e.target.value})} style={{width:70}}/></td>
+<td></td>
+<td><button className="bp" onClick={()=>{sP(products.map(x=>x.id===eid?{...ed}:x));setEid(null)}} style={{fontSize:12,padding:'4px 10px'}}>儲存</button></td>
+</tr>);
+return(<tr key={p.id}>
+<td><span className="tag tbl">{p.cat}</span></td>
+<td style={{fontWeight:500}}>{p.name}</td>
+<td>${$(p.retail)}</td>
+<td>${$(p.rp||0)}</td>
+<td style={{background:'#fff7ed'}}>${$(p.dp||0)}</td>
+<td style={{background:'#e6f7fa'}}>${$(p.cp||0)}</td>
+<td style={{background:'#fef3c7',fontWeight:600}}>${$(p.sp||0)}</td>
+<td>${$(p.cost)}</td>
+<td><span className={C(mg)}>{P(mg)}</span></td>
+<td style={{whiteSpace:'nowrap'}}>
+<button className="bs" onClick={()=>{setEid(p.id);setEd({...p})}} style={{fontSize:12,padding:'4px 10px',marginRight:4}}>編輯</button>
+<button className="bd" onClick={()=>{if(confirm('確定？'))sP(products.filter(x=>x.id!==p.id))}} style={{fontSize:12}}>刪除</button>
+</td></tr>)})}
+</tbody></table></div>
+<p style={{fontSize:12,color:'#94a3b8',marginTop:8}}>共 {fl.length} 項　｜　資料自動儲存在瀏覽器中</p>
+{sa&&<Modal title="新增產品" onClose={()=>setSa(false)}>{close=>{
+const[d,sD]=useState({name:'',cat:'',retail:0,rp:0,dp:0,cp:0,sp:0,cost:0});
+return(<div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+<F l="分類"><input type="text" value={d.cat} onChange={e=>sD({...d,cat:e.target.value})} style={{width:'100%'}}/></F>
+<F l="產品名稱"><input type="text" value={d.name} onChange={e=>sD({...d,name:e.target.value})} style={{width:'100%'}}/></F>
+<F l="定價"><input type="number" value={d.retail} onChange={e=>sD({...d,retail:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="零售價"><input type="number" value={d.rp} onChange={e=>sD({...d,rp:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="經銷價"><input type="number" value={d.dp} onChange={e=>sD({...d,dp:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="特約價"><input type="number" value={d.cp} onChange={e=>sD({...d,cp:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="特殊價"><input type="number" value={d.sp} onChange={e=>sD({...d,sp:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="淨淨成本"><input type="number" step=".01" value={d.cost} onChange={e=>sD({...d,cost:+e.target.value})} style={{width:'100%'}}/></F>
+</div>
+<div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
+<button className="bs" onClick={close}>取消</button>
+<button className="bp" onClick={()=>{if(!d.name)return;sP([...products,{...d,id:Math.max(0,...products.map(x=>x.id))+1}]);close()}}>新增</button>
+</div></div>)}}</Modal>}
+</div>);
+}
+
+/* ==================== 2. 組合設定 ==================== */
+function T2({combos,sC,products}){
+const[vw,setVw]=useState('card');const[sa,setSa]=useState(false);const[eid,setEid]=useState(null);
+const inf=c=>{let cost=0,ret=0,tDp=0,tCp=0,tSp=0,ns=[];c.items.forEach(it=>{const p=products.find(x=>x.id===it.pid);if(p){cost+=p.cost*it.qty;ret+=p.retail*it.qty;tDp+=(p.dp||0)*it.qty;tCp+=(p.cp||0)*it.qty;tSp+=(p.sp||0)*it.qty;ns.push(p.name+(it.qty>1?' x'+it.qty:''))}});const dp=c.dp||tDp;const cp=c.cp||tCp;const sp=c.sp||tSp;const mg=sp>0?(sp-cost)/sp:0;return{cost,ret,dp,cp,sp,ns,mg}};
+const del=id=>{if(confirm('確定？'))sC(combos.filter(c=>c.id!==id))};
+const save=data=>{if(eid){sC(combos.map(c=>c.id===eid?{...data,id:eid}:c))}else{sC([...combos,{...data,id:Math.max(0,...combos.map(c=>c.id))+1}])};setEid(null);setSa(false)};
+const edit=id=>{setEid(id);setSa(true)};
+
+return(<div>
+<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
+<h2 style={{fontSize:18,fontWeight:600}}>產品組合設定</h2>
+<div style={{display:'flex',gap:8}}>
+<button className={vw==='card'?'bp':'bs'} onClick={()=>setVw('card')} style={{fontSize:12,padding:'6px 12px'}}>卡片</button>
+<button className={vw==='table'?'bp':'bs'} onClick={()=>setVw('table')} style={{fontSize:12,padding:'6px 12px'}}>表格</button>
+<button className="bp" onClick={()=>{setEid(null);setSa(true)}}>+ 新增組合</button>
+</div></div>
+
+{vw==='card'?
+<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(380px,1fr))',gap:16}}>
+{combos.map(c=>{const i=inf(c);return(
+<div key={c.id} className="card" style={{padding:16}}>
+<div style={{display:'flex',justifyContent:'space-between'}}><h3 style={{fontSize:15,fontWeight:600,marginBottom:8}}>{c.name}</h3>
+<div style={{display:'flex',gap:4}}><button className="bs" onClick={()=>edit(c.id)} style={{fontSize:11,padding:'3px 8px'}}>編輯</button><button className="bd" onClick={()=>del(c.id)} style={{fontSize:11,padding:'3px 8px'}}>刪除</button></div></div>
+<div style={{fontSize:12,color:'#64748b',marginBottom:8}}>{i.ns.join(' + ')}</div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr 1fr 1fr',gap:8,fontSize:13}}>
+<div><span style={{color:'#94a3b8'}}>官網價</span><br/><b>${$(c.retail||i.ret)}</b></div>
+<div><span style={{color:'#94a3b8'}}>經銷價</span><br/><b>${$(i.dp)}</b></div>
+<div><span style={{color:'#94a3b8'}}>特約價</span><br/><b>${$(i.cp)}</b></div>
+<div><span style={{color:'#94a3b8'}}>特殊價</span><br/><b>${$(i.sp)}</b></div>
+<div><span style={{color:'#94a3b8'}}>成本</span><br/><b>${$(i.cost)}</b></div>
+<div><span style={{color:'#94a3b8'}}>毛利率</span><br/><span className={C(i.mg)}>{P(i.mg)}</span></div>
+</div></div>)})}
+</div>
+:
+<div className="card" style={{overflow:'auto'}}><table><thead><tr>
+<th>組合名稱</th><th>組合內容</th><th>官網價</th><th style={{background:'#fff7ed'}}>經銷價</th><th style={{background:'#e6f7fa'}}>特約價</th><th style={{background:'#fef3c7'}}>特殊價</th><th>成本</th><th>毛利率(特殊)</th><th>操作</th>
+</tr></thead><tbody>
+{combos.map(c=>{const i=inf(c);return(
+<tr key={c.id}>
+<td style={{fontWeight:500}}>{c.name}</td>
+<td style={{fontSize:12,color:'#64748b',maxWidth:300}}>{i.ns.join(' + ')}</td>
+<td>${$(c.retail||i.ret)}</td>
+<td style={{background:'#fff7ed'}}>${$(i.dp)}</td>
+<td style={{background:'#e6f7fa'}}>${$(i.cp)}</td>
+<td style={{background:'#fef3c7',fontWeight:600}}>${$(i.sp)}</td>
+<td>${$(i.cost)}</td>
+<td><span className={C(i.mg)}>{P(i.mg)}</span></td>
+<td style={{whiteSpace:'nowrap'}}>
+<button className="bs" onClick={()=>edit(c.id)} style={{fontSize:12,padding:'4px 10px',marginRight:4}}>編輯</button>
+<button className="bd" onClick={()=>del(c.id)} style={{fontSize:12}}>刪除</button>
+</td></tr>)})}
+</tbody></table></div>}
+
+{sa&&<CModal products={products} combo={eid?combos.find(c=>c.id===eid):null} onSave={save} onClose={()=>{setSa(false);setEid(null)}}/>}
+</div>);
+}
+
+function CModal({products,combo,onSave,onClose}){
+const[name,setName]=useState(combo?.name||'');
+const[sp,setSp]=useState(combo?.sp||0);
+const[retail,setRetail]=useState(combo?.retail||0);
+const[items,setItems]=useState(combo?.items||[{pid:products[0]?.id||1,qty:1}]);
+const[autoC,setAutoC]=useState(!combo);
+const[autoR,setAutoR]=useState(!combo);
+
+let tCost=0,tDp=0,tCp=0,tSp=0,tRet=0;
+items.forEach(it=>{const p=products.find(x=>x.id===it.pid);if(p){tCost+=p.cost*it.qty;tDp+=(p.dp||0)*it.qty;tCp+=(p.cp||0)*it.qty;tSp+=(p.sp||0)*it.qty;tRet+=p.retail*it.qty}});
+const fSp=autoC?tSp:sp;const fRet=autoR?tRet:retail;
+const mg=fSp>0?(fSp-tCost)/fSp:0;
+
+return(<Modal title={combo?'編輯組合':'新增組合'} onClose={onClose}>{close=>(<div>
+<F l="組合名稱"><input type="text" value={name} onChange={e=>setName(e.target.value)} style={{width:'100%'}}/></F>
+<div style={{display:'flex',gap:12,flexWrap:'wrap',margin:'12px 0'}}>
+<div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
+<F l="官網價"><input type="number" value={autoR?tRet:retail} disabled={autoR} onChange={e=>setRetail(+e.target.value)} style={{width:120,opacity:autoR?.5:1}}/></F>
+<label style={{fontSize:12,display:'flex',alignItems:'center',gap:4,paddingBottom:6}}><input type="checkbox" checked={autoR} onChange={e=>setAutoR(e.target.checked)}/> 自動</label>
+</div>
+<div style={{display:'flex',gap:8,alignItems:'flex-end'}}>
+<F l="組合特殊價"><input type="number" value={autoC?tSp:sp} disabled={autoC} onChange={e=>setSp(+e.target.value)} style={{width:120,opacity:autoC?.5:1}}/></F>
+<label style={{fontSize:12,display:'flex',alignItems:'center',gap:4,paddingBottom:6}}><input type="checkbox" checked={autoC} onChange={e=>setAutoC(e.target.checked)}/> 自動</label>
+</div></div>
+<div style={{fontSize:12,color:'#64748b',marginBottom:8}}>組合內容</div>
+{items.map((it,i)=>(
+<div key={i} style={{display:'flex',gap:8,alignItems:'center',marginBottom:8}}>
+<select value={it.pid} onChange={e=>{const n=[...items];n[i]={...it,pid:+e.target.value};setItems(n)}} style={{flex:1}}>
+{products.map(p=><option key={p.id} value={p.id}>{p.name}（特殊${p.sp||0}）</option>)}
+</select><span style={{fontSize:12}}>x</span>
+<input type="number" min={1} value={it.qty} onChange={e=>{const n=[...items];n[i]={...it,qty:+e.target.value};setItems(n)}} style={{width:60}}/>
+{items.length>1&&<button className="bd" onClick={()=>setItems(items.filter((_,j)=>j!==i))} style={{fontSize:11,padding:'3px 8px'}}>x</button>}
+</div>))}
+<button className="bs" onClick={()=>setItems([...items,{pid:products[0]?.id,qty:1}])} style={{fontSize:12,marginBottom:12}}>+ 加一項</button>
+<div className="ib" style={{marginBottom:16}}>
+官網：<b>${$(fRet)}</b> | 經銷：<b>${$(autoC?tDp:0)}</b> | 特約：<b>${$(autoC?tCp:0)}</b> | 特殊：<b>${$(fSp)}</b> | 成本：<b>${$(tCost)}</b> | 毛利率(特殊)：<span className={C(mg)}><b>{P(mg)}</b></span>
+</div>
+<div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+<button className="bs" onClick={close}>取消</button>
+<button className="bp" onClick={()=>{if(name){onSave({name,dp:autoC?0:0,cp:autoC?0:0,sp:fSp,retail:fRet,items});close()}}}>儲存</button>
+</div></div>)}</Modal>);
+}
+
+/* ==================== 3. 報價試算 ==================== */
+function T3({products,combos,clients,sCl,events,sE}){
+const[cid,setCid]=useState(clients[0]?.id||0);
+const[eName,setEN]=useState('');
+const[eDate,setED]=useState(new Date().toISOString().slice(0,10));
+const[rows,setRows]=useState([]);
+const[shipMode,setSM]=useState('lump');
+const[shipLump,setSL]=useState(0);
+const[shipPer,setSP]=useState(150);
+const[showAC,setSAC]=useState(false);
+const[tierF,setTierF]=useState('all');
+const[clQ,setClQ]=useState('');
+const filteredCl=useMemo(()=>clients.filter(c=>{
+  if(tierF!=='all'&&c.tier!==tierF)return false;
+  if(clQ&&!c.name.toLowerCase().includes(clQ.toLowerCase()))return false;
+  return true;
+}),[clients,tierF,clQ]);
+const[evComm,setEvComm]=useState(null);
+
+const cl=clients.find(c=>c.id===cid);
+const tier=cl?.tier||'cp';
+const tierLabel={'dp':'經銷價','cp':'特約價','sp':'特殊價'}[tier]||'特約價';
+const comm=evComm!==null?evComm:(cl?.commission||0);
+useEffect(()=>{setEvComm(null)},[cid]);
+
+const addR=t=>setRows([...rows,t==='s'?{type:'s',pid:products[0]?.id,qty:100,lp:0,clp:false,cpo:0,ccp:false}:{type:'c',cid:combos[0]?.id,qty:100,lp:0,clp:false,cpo:0,ccp:false}]);
+const upR=(i,u)=>setRows(rows.map((r,j)=>j===i?{...r,...u}:r));
+const rmR=i=>setRows(rows.filter((_,j)=>j!==i));
+
+const calcR=row=>{
+  let dCp=0,unitCost=0,name='',dLive=0,dRetail=0;
+  if(row.type==='s'){
+    const p=products.find(x=>x.id===row.pid);if(!p)return{};
+    name=p.name;dCp=p[tier]||p.cp;unitCost=p.cost;dLive=p.retail;dRetail=p.retail;
+  }else{
+    const c=combos.find(x=>x.id===row.cid);if(!c)return{};
+    name=c.name;dCp=c[tier]||0;dRetail=c.retail||0;dLive=dRetail;
+    c.items.forEach(it=>{const p=products.find(x=>x.id===it.pid);if(p){unitCost+=p.cost*it.qty;if(!dRetail)dLive+=p.retail*it.qty;if(!dCp)dCp+=(p[tier]||p.cp)*it.qty}});
+  }
+  const cp=row.ccp?row.cpo:dCp;
+  const lp=row.clp?row.lp:dLive;
+  const retail=dRetail||dLive;
+  const totalCost=unitCost*row.qty;
+  const perShip=shipMode==='perItem'?shipPer*row.qty:0;
+  const vendorProfit=lp-cp;
+  const vendorMargin=lp>0?vendorProfit/lp:0;
+  const netRevenue=cp*row.qty;
+  const commAmt=comm>0?netRevenue*comm:0;
+  const netProfit=netRevenue-totalCost-commAmt-perShip;
+  const netMargin=netRevenue>0?netProfit/netRevenue:0;
+  return{name,cp,dCp,lp,dLive,retail,vendorProfit,vendorMargin,netRevenue,totalCost,netProfit,netMargin,commAmt,perShip};
+};
+
+const sum=useMemo(()=>{
+  let rev=0,cost=0,profit=0,comT=0,shipT=0;
+  rows.forEach(r=>{const c=calcR(r);rev+=c.netRevenue||0;cost+=c.totalCost||0;profit+=c.netProfit||0;comT+=c.commAmt||0;shipT+=c.perShip||0});
+  if(shipMode==='lump'){profit-=shipLump}
+  const totalCostAll=cost+comT+(shipMode==='lump'?shipLump:shipT);
+  return{rev,totalCostAll,profit,margin:rev>0?profit/rev:0,comT,shipT};
+},[rows,shipMode,shipLump,shipPer,cid,evComm]);
+
+const saveEv=()=>{
+  if(!eName){alert('請輸入場次名稱');return}
+  const d=eDate?new Date(eDate):new Date();
+  const totalShip=shipMode==='lump'?shipLump:sum.shipT;
+  const ev={id:Date.now(),name:eName,client:cl?.name||'',commission:comm,
+    date:eDate,year:d.getFullYear(),month:d.getMonth()+1,
+    totalRevenue:sum.rev,totalCost:sum.totalCostAll,totalProfit:sum.profit,totalMargin:sum.margin,
+    shipping:totalShip,shipMode,
+    rows:rows.map(r=>({...r,calc:calcR(r)}))};
+  sE([...events,ev]);
+  alert('已儲存至場次總表！');
+};
+
+const addCl=data=>{const nid=Math.max(0,...clients.map(c=>c.id))+1;sCl([...clients,{...data,id:nid}]);setCid(nid);setSAC(false)};
+const editCl=(id,data)=>{sCl(clients.map(c=>c.id===id?{...c,...data}:c))};
+const delCl=id=>{if(!confirm('確定刪除此客戶？'))return;sCl(clients.filter(c=>c.id!==id));if(cid===id)setCid(clients[0]?.id||0)};
+const[showEC,setSEC]=useState(false);
+const[editClData,setECD]=useState(null);
+
+const hasComm=comm>0;
+const colSpan=hasComm?14:13;
+
+return(<div>
+<div className="card" style={{padding:20,marginBottom:16}}>
+<div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap'}}>
+<F l="場次名稱"><input type="text" placeholder="例：11504月直播" value={eName} onChange={e=>setEN(e.target.value)} style={{width:180}}/></F>
+<F l="日期"><input type="text" placeholder="YYYY-MM-DD" value={eDate} onChange={e=>setED(e.target.value)} style={{width:120}}/></F>
+<F l="廠商類型"><select value={tierF} onChange={e=>{setTierF(e.target.value);setClQ('')}} style={{minWidth:100}}>
+<option value="all">全部</option><option value="dp">經銷商</option><option value="cp">特約商</option><option value="sp">特殊</option>
+</select></F>
+<F l="搜尋廠商"><input type="text" placeholder="輸入名稱搜尋..." value={clQ} onChange={e=>setClQ(e.target.value)} style={{width:140}}/></F>
+<F l="廠商名稱"><div style={{display:'flex',gap:4}}>
+<select value={cid} onChange={e=>setCid(+e.target.value)} style={{minWidth:150}}>
+{filteredCl.map(c=><option key={c.id} value={c.id}>{c.name}{c.commission>0?` (${(c.commission*100)}%)`:''}</option>)}
+{filteredCl.length===0&&<option value="">無符合廠商</option>}
+</select>
+<button className="bs" onClick={()=>setSAC(true)} style={{fontSize:12,padding:'4px 8px'}}>+</button>
+{cl&&<button className="bs" onClick={()=>{setECD({...cl});setSEC(true)}} style={{fontSize:12,padding:'4px 8px'}}>✏️</button>}
+{cl&&clients.length>1&&<button className="bd" onClick={()=>delCl(cl.id)} style={{fontSize:12,padding:'4px 8px'}}>🗑</button>}</div></F>
+{cl&&cl.commission>0&&<F l={`本場分潤（預設${(cl.commission*100)}%）`}>
+<input type="number" step=".01" value={evComm!==null?evComm:cl.commission} onChange={e=>setEvComm(+e.target.value)} style={{width:80}}/></F>}
+</div>
+<div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap',marginTop:12,paddingTop:12,borderTop:'1px solid #e2e8f0'}}>
+<F l="運費模式"><select value={shipMode} onChange={e=>setSM(e.target.value)} style={{minWidth:180}}>
+<option value="lump">一筆總運費</option><option value="perItem">每品項加運費（試算用）</option></select></F>
+{shipMode==='lump'?<F l="運費總額"><input type="number" value={shipLump} onChange={e=>setSL(+e.target.value)} style={{width:120}}/></F>
+:<F l="每品項運費"><input type="number" value={shipPer} onChange={e=>setSP(+e.target.value)} style={{width:100}}/></F>}
+{shipMode==='perItem'&&<div style={{fontSize:12,color:'#d97706',paddingBottom:6}}>* 每組加 ${shipPer}，結束後可在場次總表改為實際運費</div>}
+</div>
+{cl&&<div className="ib" style={{marginTop:12}}><b>{cl.name}</b><span style={{background:'#e6f7fa',color:'#1a6a75',padding:'2px 8px',borderRadius:4,fontSize:12,marginLeft:8}}>{tierLabel}</span>{hasComm&&<span> · 本場分潤 {(comm*100).toFixed(0)}%</span>}{cl.note&&<span style={{color:'#64748b'}}> · {cl.note}</span>}</div>}
+</div>
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
+<div className="sc s2"><div style={{fontSize:12,opacity:.9}}>淨淨營業額</div><div style={{fontSize:22,fontWeight:700}}>${$(sum.rev)}</div></div>
+<div className="sc s4"><div style={{fontSize:12,opacity:.9}}>總成本{hasComm?'(含分潤)':''}</div><div style={{fontSize:22,fontWeight:700}}>${$(sum.totalCostAll)}</div></div>
+<div className="sc s3"><div style={{fontSize:12,opacity:.9}}>淨淨利潤</div><div style={{fontSize:22,fontWeight:700}}>${$(sum.profit)}</div></div>
+<div className="sc s1"><div style={{fontSize:12,opacity:.9}}>淨淨毛利率</div><div style={{fontSize:22,fontWeight:700}}>{P(sum.margin)}</div></div>
+</div>
+
+<div style={{display:'flex',gap:8,marginBottom:12}}>
+<button className="bp" onClick={()=>addR('s')}>+ 加單品</button>
+<button className="bp" onClick={()=>addR('c')}>+ 加組合</button>
+<div style={{flex:1}}/>
+<button className="bg" onClick={saveEv}>&#128190; 儲存為場次紀錄</button>
+</div>
+
+<div className="card" style={{overflow:'auto'}}><table><thead><tr>
+<th>類型</th><th>品項</th><th>組數</th><th>官網價</th>
+<th className="eh">直播價 &#9998;</th><th className="eh">{tierLabel} &#9998;</th>
+<th>廠商利潤</th><th>廠商毛利</th>
+<th>淨淨營業額</th><th>淨淨成本</th>
+{hasComm&&<th>分潤</th>}
+{shipMode==='perItem'&&<th>運費</th>}
+<th>淨淨利潤</th><th>毛利率</th><th></th>
+</tr></thead><tbody>
+{rows.map((r,i)=>{const c=calcR(r);return(
+<tr key={i}>
+<td><span className={`tag ${r.type==='s'?'tbl':'tgr'}`}>{r.type==='s'?'單品':'組合'}</span></td>
+<td>{r.type==='s'
+  ?<select value={r.pid} onChange={e=>upR(i,{pid:+e.target.value,clp:false,ccp:false})} style={{minWidth:200}}>{products.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select>
+  :<select value={r.cid} onChange={e=>upR(i,{cid:+e.target.value,clp:false,ccp:false})} style={{minWidth:200}}>{combos.map(cb=><option key={cb.id} value={cb.id}>{cb.name}</option>)}</select>}</td>
+<td><input type="number" min={0} value={r.qty} onChange={e=>upR(i,{qty:+e.target.value})} style={{width:70}}/></td>
+<td style={{color:'#64748b'}}>${$(c.retail)}</td>
+<td className="eh"><input type="number" value={r.clp?r.lp:c.dLive} onChange={e=>upR(i,{lp:+e.target.value,clp:true})} style={{width:85}}/></td>
+<td className="eh"><input type="number" value={r.ccp?r.cpo:c.dCp} onChange={e=>upR(i,{cpo:+e.target.value,ccp:true})} style={{width:85}}/></td>
+<td style={{color:c.vendorProfit>=0?'#059669':'#dc2626'}}>${$(c.vendorProfit)}</td>
+<td><span className={C(c.vendorMargin)}>{P(c.vendorMargin)}</span></td>
+<td style={{fontWeight:500}}>${$(c.netRevenue)}</td>
+<td>${$(c.totalCost)}</td>
+{hasComm&&<td style={{color:'#d97706'}}>${$(c.commAmt)}</td>}
+{shipMode==='perItem'&&<td style={{color:'#92400e'}}>${$(c.perShip)}</td>}
+<td style={{fontWeight:600,color:c.netProfit>=0?'#059669':'#dc2626'}}>${$(c.netProfit)}</td>
+<td><span className={C(c.netMargin)}>{P(c.netMargin)}</span></td>
+<td><button className="bd" onClick={()=>rmR(i)} style={{fontSize:11}}>x</button></td>
+</tr>)})}
+{shipMode==='lump'&&shipLump>0&&<tr className="ship-row"><td colSpan={colSpan-4}></td><td colSpan={2} style={{textAlign:'right',color:'#92400e'}}>運費</td><td style={{fontWeight:600,color:'#dc2626'}}>-${$(shipLump)}</td><td colSpan={2}></td></tr>}
+{rows.length===0&&<tr><td colSpan={colSpan} style={{textAlign:'center',padding:32,color:'#94a3b8'}}>點擊上方按鈕加入品項開始報價</td></tr>}
+</tbody></table></div>
+
+{showAC&&<Modal title="新增廠商" onClose={()=>setSAC(false)}>{close=>{
+const[d,sD]=useState({name:'',commission:0,note:'',tier:'cp'});
+return(<div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+<F l="名稱"><input type="text" value={d.name} onChange={e=>sD({...d,name:e.target.value})} style={{width:'100%'}}/></F>
+<F l="價格類型"><select value={d.tier} onChange={e=>sD({...d,tier:e.target.value})} style={{width:'100%'}}><option value="dp">經銷價</option><option value="cp">特約價</option><option value="sp">特殊價</option></select></F>
+<F l="分潤比例 (0=無)"><input type="number" step=".01" value={d.commission} onChange={e=>sD({...d,commission:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="備註"><input type="text" value={d.note} onChange={e=>sD({...d,note:e.target.value})} style={{width:'100%'}}/></F>
+</div>
+<div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
+<button className="bs" onClick={close}>取消</button>
+<button className="bp" onClick={()=>{if(!d.name)return;addCl(d);close()}}>新增</button>
+</div></div>)}}</Modal>}
+
+{showEC&&editClData&&<Modal title="編輯客戶資料" onClose={()=>setSEC(false)}>{close=>{
+const[d,sD]=useState({...editClData});
+return(<div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+<F l="名稱"><input type="text" value={d.name} onChange={e=>sD({...d,name:e.target.value})} style={{width:'100%'}}/></F>
+<F l="價格類型"><select value={d.tier||'cp'} onChange={e=>sD({...d,tier:e.target.value})} style={{width:'100%'}}><option value="dp">經銷價</option><option value="cp">特約價</option><option value="sp">特殊價</option></select></F>
+<F l="分潤比例 (0=無)"><input type="number" step=".01" value={d.commission} onChange={e=>sD({...d,commission:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="備註"><input type="text" value={d.note} onChange={e=>sD({...d,note:e.target.value})} style={{width:'100%'}}/></F>
+</div>
+<div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
+<button className="bs" onClick={close}>取消</button>
+<button className="bp" onClick={()=>{if(!d.name)return;editCl(d.id,d);close();setSEC(false)}}>儲存</button>
+</div></div>)}}</Modal>}
+
+</div>);
+}
+
+/* ==================== 4. 數據分析（四合一）==================== */
+function T4({products,combos,events}){
+const[sub,setSub]=useState(0);
+const subs=['數據總覽','廠商業績','定價模擬'];
+
+/* ---------- A. 數據總覽（含年月篩選）---------- */
+function ViewDashboard(){
+  const[dyF,setDyF]=useState('全部');const[dmF,setDmF]=useState('全部');
+  const allYears=['全部',...new Set(events.map(e=>e.year).filter(Boolean))];
+  const allMonths=['全部',...[...new Set(events.map(e=>e.month).filter(Boolean))].sort((a,b)=>a-b)];
+  const fEv=events.filter(e=>(dyF==='全部'||e.year===+dyF)&&(dmF==='全部'||e.month===+dmF));
+
+  const totR=fEv.reduce((s,e)=>s+e.totalRevenue,0);
+  const totP=fEv.reduce((s,e)=>s+e.totalProfit,0);
+  const avgM=totR>0?totP/totR:0;
+  // 按廠商分組
+  const byClient={};fEv.forEach(e=>{if(!byClient[e.client])byClient[e.client]={rev:0,profit:0,count:0};byClient[e.client].rev+=e.totalRevenue;byClient[e.client].profit+=e.totalProfit;byClient[e.client].count++});
+  const clientArr=Object.entries(byClient).sort((a,b)=>b[1].rev-a[1].rev);
+  const maxClientRev=Math.max(1,...clientArr.map(([,v])=>v.rev));
+  // 按月份分組
+  const byMonth={};fEv.forEach(e=>{const k=`${e.year||''}-${String(e.month||'').padStart(2,'0')}`;if(!byMonth[k])byMonth[k]={rev:0,profit:0,count:0};byMonth[k].rev+=e.totalRevenue;byMonth[k].profit+=e.totalProfit;byMonth[k].count++});
+  const monthArr=Object.entries(byMonth).sort((a,b)=>a[0].localeCompare(b[0]));
+  const maxMonthRev=Math.max(1,...monthArr.map(([,v])=>v.rev));
+  // 熱銷品項（從場次明細統計）
+  const itemStats={};fEv.forEach(e=>(e.rows||[]).forEach(r=>{const c=r.calc||{};const n=c.name||'';if(!n)return;if(!itemStats[n])itemStats[n]={qty:0,rev:0,profit:0};itemStats[n].qty+=r.qty||0;itemStats[n].rev+=c.netRevenue||0;itemStats[n].profit+=c.netProfit||0}));
+  const topItems=Object.entries(itemStats).sort((a,b)=>b[1].qty-a[1].qty).slice(0,10);
+  const maxQty=Math.max(1,...topItems.map(([,v])=>v.qty));
+
+  if(!events.length)return(<div className="card" style={{padding:40,textAlign:'center',color:'#94a3b8'}}>尚無場次資料，請先在「報價試算」儲存場次</div>);
+
+  return(<div>
+  {/* 篩選列 */}
+  <div className="card" style={{padding:12,marginBottom:16,display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}}>
+  <F l="年度"><select value={dyF} onChange={e=>setDyF(e.target.value)} style={{minWidth:100}}>
+  {allYears.map(y=><option key={y} value={y}>{y==='全部'?'全部年度':y+'年'}</option>)}</select></F>
+  <F l="月份"><select value={dmF} onChange={e=>setDmF(e.target.value)} style={{minWidth:100}}>
+  {allMonths.map(m=><option key={m} value={m}>{m==='全部'?'全部月份':m+'月'}</option>)}</select></F>
+  <div style={{flex:1}}/>
+  <span style={{fontSize:13,color:'#64748b'}}>篩選結果：<b style={{color:'#1A6A75'}}>{fEv.length}</b> 場</span>
+  </div>
+
+  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:20}}>
+  <div className="sc s1"><div style={{fontSize:12,opacity:.9}}>場次數</div><div style={{fontSize:28,fontWeight:700}}>{fEv.length}</div></div>
+  <div className="sc s2"><div style={{fontSize:12,opacity:.9}}>累計營業額</div><div style={{fontSize:22,fontWeight:700}}>${$(totR)}</div></div>
+  <div className="sc s3"><div style={{fontSize:12,opacity:.9}}>累計利潤</div><div style={{fontSize:22,fontWeight:700}}>${$(totP)}</div></div>
+  <div className="sc s4"><div style={{fontSize:12,opacity:.9}}>平均毛利率</div><div style={{fontSize:22,fontWeight:700}}>{P(avgM)}</div></div>
+  </div>
+
+  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
+  <div className="card" style={{padding:20}}>
+  <h3 style={{fontSize:15,fontWeight:600,marginBottom:16}}>&#128202; 廠商營收貢獻</h3>
+  {clientArr.length===0&&<div style={{color:'#94a3b8',textAlign:'center',padding:20}}>此期間無資料</div>}
+  {clientArr.map(([name,v])=><div key={name} style={{marginBottom:12}}>
+  <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:4}}><span style={{fontWeight:500}}>{name} <span style={{color:'#64748b'}}>({v.count}場)</span></span><span style={{fontWeight:600}}>${$(v.rev)}</span></div>
+  <div className="bar-c"><div className="bar-f" style={{width:(v.rev/maxClientRev*100)+'%',background:'linear-gradient(90deg,#3EBAC8,#2DA3B2)'}}/></div>
+  <div style={{fontSize:11,color:'#64748b',marginTop:2}}>利潤 ${$(v.profit)} · 毛利率 {P(v.rev>0?v.profit/v.rev:0)}</div>
+  </div>)}
+  </div>
+
+  <div className="card" style={{padding:20}}>
+  <h3 style={{fontSize:15,fontWeight:600,marginBottom:16}}>&#128197; 月度營收趨勢</h3>
+  {monthArr.length===0&&<div style={{color:'#94a3b8',textAlign:'center',padding:20}}>此期間無資料</div>}
+  {monthArr.map(([month,v])=><div key={month} style={{marginBottom:12}}>
+  <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:4}}><span style={{fontWeight:500}}>{month}</span><span style={{fontWeight:600}}>${$(v.rev)}</span></div>
+  <div style={{display:'flex',gap:4,alignItems:'center'}}>
+  <div className="bar-c" style={{flex:1}}><div className="bar-f" style={{width:(v.rev/maxMonthRev*100)+'%',background:'linear-gradient(90deg,#10b981,#38ef7d)'}}/></div>
+  <span style={{fontSize:11,color:v.profit>=0?'#059669':'#dc2626',minWidth:80,textAlign:'right'}}>利潤 ${$(v.profit)}</span>
+  </div></div>)}
+  </div>
+  </div>
+
+  <div className="card" style={{padding:20}}>
+  <h3 style={{fontSize:15,fontWeight:600,marginBottom:16}}>&#128293; 熱銷品項 TOP 10（依總銷售組數）</h3>
+  {topItems.map(([name,v],i)=><div key={name} style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}>
+  <span style={{width:24,textAlign:'center',fontSize:14,fontWeight:700,color:i<3?'#3EBAC8':'#94a3b8'}}>{i+1}</span>
+  <span style={{width:260,fontSize:13,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{name}</span>
+  <div style={{flex:1}}><div className="bar-c"><div className="bar-f" style={{width:(v.qty/maxQty*100)+'%',background:i<3?'linear-gradient(90deg,#f59e0b,#f2c94c)':'#e2e8f0'}}/></div></div>
+  <span style={{width:60,textAlign:'right',fontSize:13,fontWeight:600}}>{v.qty}組</span>
+  <span style={{width:100,textAlign:'right',fontSize:12,color:'#64748b'}}>營收 ${$(v.rev)}</span>
+  </div>)}
+  {topItems.length===0&&<div style={{color:'#94a3b8',textAlign:'center',padding:20}}>尚無品項銷售資料</div>}
+  </div>
+  </div>);
+}
+
+/* ---------- B. 廠商業績總覽（含篩選 + 年月）---------- */
+function ViewVendorPerf(){
+  const[vF,setVF]=useState('全部');
+  const[vyF,setVyF]=useState('全部');const[vmF,setVmF]=useState('全部');
+  const allYears=['全部',...new Set(events.map(e=>e.year).filter(Boolean))];
+  const allMonths=['全部',...[...new Set(events.map(e=>e.month).filter(Boolean))].sort((a,b)=>a-b)];
+  // 先按年月篩選
+  const fEv=events.filter(e=>(vyF==='全部'||e.year===+vyF)&&(vmF==='全部'||e.month===+vmF));
+  const byClient={};fEv.forEach(e=>{const k=e.client||'未知';if(!byClient[k])byClient[k]={rev:0,profit:0,cost:0,count:0,comm:0,events:[]};
+    byClient[k].rev+=e.totalRevenue;byClient[k].profit+=e.totalProfit;byClient[k].cost+=e.totalCost;byClient[k].count++;byClient[k].comm=e.commission||byClient[k].comm;byClient[k].events.push(e)});
+  const allNames=['全部',...Object.keys(byClient).sort()];
+  const arr=vF==='全部'?Object.entries(byClient).sort((a,b)=>b[1].rev-a[1].rev):Object.entries(byClient).filter(([k])=>k===vF);
+  // 總計
+  const totals=arr.reduce((a,[,v])=>({rev:a.rev+v.rev,profit:a.profit+v.profit,count:a.count+v.count}),{rev:0,profit:0,count:0});
+
+  if(!events.length)return(<div className="card" style={{padding:40,textAlign:'center',color:'#94a3b8'}}>尚無場次資料</div>);
+
+  return(<div>
+  {/* 篩選列 */}
+  <div className="card" style={{padding:12,marginBottom:16,display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}}>
+  <F l="年度"><select value={vyF} onChange={e=>setVyF(e.target.value)} style={{minWidth:100}}>
+  {allYears.map(y=><option key={y} value={y}>{y==='全部'?'全部年度':y+'年'}</option>)}</select></F>
+  <F l="月份"><select value={vmF} onChange={e=>setVmF(e.target.value)} style={{minWidth:100}}>
+  {allMonths.map(m=><option key={m} value={m}>{m==='全部'?'全部月份':m+'月'}</option>)}</select></F>
+  <F l="廠商"><select value={vF} onChange={e=>setVF(e.target.value)} style={{minWidth:160}}>
+  {allNames.map(n=><option key={n} value={n}>{n==='全部'?'全部廠商 ('+Object.keys(byClient).length+')':n}</option>)}
+  </select></F>
+  <div style={{flex:1}}/>
+  <div style={{fontSize:13,color:'#64748b'}}>顯示 <b style={{color:'#1A6A75'}}>{arr.length}</b> 家廠商 · <b>{totals.count}</b> 場</div>
+  </div>
+
+  {/* 摘要卡片 */}
+  <div style={{display:'grid',gridTemplateColumns:'repeat('+Math.min(arr.length,4)+',1fr)',gap:12,marginBottom:20}}>
+  {arr.map(([name,v],i)=><div key={name} className="sc" style={{background:['linear-gradient(135deg,#2DA3B2,#3EBAC8)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#8b5cf6,#a78bfa)','linear-gradient(135deg,#10b981,#34d399)'][i%4]}}>
+  <div style={{fontSize:13,opacity:.9,marginBottom:4}}>{name}</div>
+  <div style={{fontSize:24,fontWeight:700}}>${$(v.rev)}</div>
+  <div style={{fontSize:12,opacity:.8,marginTop:4}}>{v.count}場 · 利潤 ${$(v.profit)} · 毛利率 {P(v.rev>0?v.profit/v.rev:0)}</div>
+  </div>)}
+  </div>
+
+  {/* 明細表 */}
+  {arr.map(([name,v])=><div key={name} className="card" style={{padding:20,marginBottom:16}}>
+  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+  <h3 style={{fontSize:16,fontWeight:600}}>{name} <span style={{fontSize:13,color:'#64748b',fontWeight:400}}>· {v.count}場 {v.comm>0?`· 分潤${(v.comm*100).toFixed(0)}%`:''}</span></h3>
+  <div style={{display:'flex',gap:16,fontSize:13}}>
+  <span>營業額 <b>${$(v.rev)}</b></span>
+  <span>利潤 <b style={{color:v.profit>=0?'#059669':'#dc2626'}}>${$(v.profit)}</b></span>
+  <span>毛利率 <b className={C(v.rev>0?v.profit/v.rev:0)}>{P(v.rev>0?v.profit/v.rev:0)}</b></span>
+  </div></div>
+  <table><thead><tr><th>場次</th><th>日期</th><th>營業額</th><th>成本</th><th>運費</th><th>利潤</th><th>毛利率</th></tr></thead>
+  <tbody>{v.events.sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(e=><tr key={e.id}>
+  <td style={{fontWeight:500}}>{e.name}</td><td>{e.date}</td>
+  <td>${$(e.totalRevenue)}</td><td>${$(e.totalCost)}</td><td>${$(e.shipping||0)}</td>
+  <td style={{fontWeight:600,color:e.totalProfit>=0?'#059669':'#dc2626'}}>${$(e.totalProfit)}</td>
+  <td><span className={C(e.totalMargin)}>{P(e.totalMargin)}</span></td>
+  </tr>)}</tbody></table>
+  </div>)}
+  </div>);
+}
+
+/* ---------- D. 定價模擬（原廠商比較）---------- */
+function ViewPriceSim(){
+  const[sel,setSel]=useState([]);const[type,setType]=useState('single');const[sim,setSim]=useState(.7);
+  const add=id=>{if(!sel.includes(id))setSel([...sel,id])};const rm=id=>setSel(sel.filter(x=>x!==id));
+  const list=type==='combo'?combos:products;
+  const data=useMemo(()=>sel.map(id=>{
+    let name,cp,cost,retail;
+    if(type==='combo'){const c=combos.find(x=>x.id===id);if(!c)return null;let tc=0,tr=0,tSp=0;c.items.forEach(it=>{const p=products.find(x=>x.id===it.pid);if(p){tc+=p.cost*it.qty;tr+=p.retail*it.qty;tSp+=(p.sp||0)*it.qty}});name=c.name;cp=c.sp||tSp;cost=tc;retail=c.retail||tr}
+    else{const p=products.find(x=>x.id===id);if(!p)return null;name=p.name;cp=p.sp||p.cp;cost=p.cost;retail=p.retail}
+    const profit=cp-cost,mg=cp>0?profit/cp:0,sCp=Math.round(retail*sim),sP=sCp-cost,sM=sCp>0?sP/sCp:0;
+    return{id,name,cp,cost,retail,profit,mg,sCp,sP,sM}
+  }).filter(Boolean).sort((a,b)=>b.mg-a.mg),[sel,sim,type]);
+
+  return(<div>
+  <div className="card" style={{padding:16,marginBottom:16}}>
+  <div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap'}}>
+  <div><label style={{fontSize:12,color:'#64748b'}}>類型</label><br/><select value={type} onChange={e=>{setType(e.target.value);setSel([])}}><option value="single">單品</option><option value="combo">組合</option></select></div>
+  <div style={{flex:1,minWidth:250}}><label style={{fontSize:12,color:'#64748b'}}>加入比較</label><br/>
+  <select onChange={e=>{if(e.target.value)add(+e.target.value);e.target.value=''}} style={{width:'100%'}}><option value="">— 選擇 —</option>{list.filter(x=>!sel.includes(x.id)).map(x=><option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
+  <button className="bs" onClick={()=>setSel(list.map(x=>x.id))}>全選</button><button className="bs" onClick={()=>setSel([])}>清除</button>
+  </div></div>
+  {data.length>0&&<>
+  <div className="card" style={{padding:20,marginBottom:16}}>
+  <h3 style={{fontSize:15,fontWeight:600,marginBottom:4}}>&#127919; 折扣模擬器</h3>
+  <p style={{fontSize:12,color:'#64748b',marginBottom:12}}>官網價 x 折數 = 模擬售價，看不同折數下的利潤變化</p>
+  <div style={{maxWidth:400,marginBottom:16}}>
+  <input type="range" min={.3} max={1} step={.01} value={sim} onChange={e=>setSim(+e.target.value)}/>
+  <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#64748b'}}><span>3折</span><span style={{fontWeight:600,color:'#2DA3B2',fontSize:16}}>{(sim*10).toFixed(1)}折</span><span>原價</span></div></div>
+  {[...data].sort((a,b)=>b.sM-a.sM).map(d=>{const mx=Math.max(1,...data.map(x=>Math.abs(x.sP)));return(
+  <div key={d.id} style={{display:'flex',alignItems:'center',gap:12,marginBottom:8}}>
+  <span style={{width:220,fontSize:13,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{d.name}</span>
+  <span style={{width:90,fontSize:12,color:'#64748b'}}>模擬 ${$(d.sCp)}</span>
+  <div style={{flex:1}}><div className="bar-c"><div className="bar-f" style={{width:Math.max(2,d.sP>0?(d.sP/mx*100):2)+'%',background:d.sM>=.35?'#10b981':d.sM>=.2?'#f59e0b':'#ef4444'}}/></div></div>
+  <span style={{width:60,textAlign:'right',fontSize:13}} className={C(d.sM)}>{P(d.sM)}</span>
+  <span style={{width:90,textAlign:'right',fontSize:12,color:d.sP>=0?'#059669':'#dc2626'}}>利潤 ${$(d.sP)}</span>
+  </div>)})}
+  </div>
+  <div className="card" style={{overflow:'auto'}}><table><thead><tr>
+  <th>品項</th><th>官網價</th><th>現特殊價</th><th>成本</th><th>現利潤</th><th>現毛利</th>
+  <th style={{background:'#fef3c7'}}>模擬售價</th><th style={{background:'#fef3c7'}}>模擬利潤</th><th style={{background:'#fef3c7'}}>模擬毛利</th>
+  </tr></thead><tbody>{data.map(d=><tr key={d.id}>
+  <td style={{fontWeight:500}}>{d.name}</td><td>${$(d.retail)}</td><td style={{fontWeight:600}}>${$(d.cp)}</td><td>${$(d.cost)}</td>
+  <td style={{fontWeight:600,color:d.profit>=0?'#059669':'#dc2626'}}>${$(d.profit)}</td><td><span className={C(d.mg)}>{P(d.mg)}</span></td>
+  <td style={{background:'#fffbeb',fontWeight:500}}>${$(d.sCp)}</td><td style={{background:'#fffbeb',color:d.sP>=0?'#059669':'#dc2626',fontWeight:600}}>${$(d.sP)}</td>
+  <td style={{background:'#fffbeb'}}><span className={C(d.sM)}>{P(d.sM)}</span></td></tr>)}</tbody></table></div>
+  </>}
+  {sel.length===0&&<div className="card" style={{padding:40,textAlign:'center',color:'#94a3b8'}}>選擇品項即可看利潤排名和模擬</div>}
+  </div>);
+}
+
+return(<div>
+<div style={{display:'flex',gap:6,marginBottom:16}}>
+{subs.map((s,i)=><button key={i} onClick={()=>setSub(i)} style={{padding:'8px 18px',borderRadius:8,border:'none',cursor:'pointer',fontWeight:500,fontSize:14,background:sub===i?'#3EBAC8':'#e2f0f1',color:sub===i?'#fff':'#3a7a82'}}>{s}</button>)}
+</div>
+{sub===0&&<ViewDashboard/>}
+{sub===1&&<ViewVendorPerf/>}
+{sub===2&&<ViewPriceSim/>}
+</div>);
+}
+
+/* ==================== 明細編輯元件 ==================== */
+function DetailModal({detail,setDetail,dlD,events,sE}){
+const[rows,setRows]=useState(()=>detail.rows.map(r=>({...r,calc:{...r.calc}})));
+const[ship,setShip]=useState(detail.shipping||0);
+const[comm,setComm]=useState(detail.commission||0);
+
+const upRow=(i,field,val)=>{
+  setRows(rows.map((r,j)=>{
+    if(j!==i)return r;
+    const nr={...r,calc:{...r.calc}};
+    nr.calc[field]=val;
+    // recalc row profits
+    const c=nr.calc;
+    c.vendorProfit=(c.lp||0)-(c.cp||0);
+    c.vendorMargin=c.lp>0?c.vendorProfit/c.lp:0;
+    c.netRevenue=(c.cp||0)*(nr.qty||0);
+    c.totalCost=(c.unitCost||(c.totalCost/(nr.qty||1)))*(nr.qty||0);
+    const commAmt=comm>0?c.netRevenue*comm:0;
+    c.commAmt=commAmt;
+    c.netProfit=c.netRevenue-c.totalCost-commAmt;
+    c.netMargin=c.netRevenue>0?c.netProfit/c.netRevenue:0;
+    return nr;
+  }));
+};
+
+const upQty=(i,qty)=>{
+  setRows(rows.map((r,j)=>{
+    if(j!==i)return r;
+    const nr={...r,qty};const c={...r.calc};
+    c.netRevenue=(c.cp||0)*qty;
+    const oldQty=r.qty||1;const unitCost=(c.totalCost||0)/oldQty;
+    c.totalCost=unitCost*qty;
+    const commAmt=comm>0?c.netRevenue*comm:0;
+    c.commAmt=commAmt;
+    c.netProfit=c.netRevenue-c.totalCost-commAmt;
+    c.netMargin=c.netRevenue>0?c.netProfit/c.netRevenue:0;
+    nr.calc=c;return nr;
+  }));
+};
+
+const totals=useMemo(()=>{
+  let rev=0,cost=0,comT=0;
+  rows.forEach(r=>{const c=r.calc||{};rev+=c.netRevenue||0;cost+=c.totalCost||0;comT+=c.commAmt||0});
+  const totalCost=cost+comT+ship;
+  const profit=rev-totalCost;
+  const margin=rev>0?profit/rev:0;
+  return{rev,totalCost,profit,margin,comT};
+},[rows,ship,comm]);
+
+const saveDetail=()=>{
+  const updated={...detail,rows,shipping:ship,commission:comm,
+    totalRevenue:totals.rev,totalCost:totals.totalCost,totalProfit:totals.profit,totalMargin:totals.margin};
+  sE(events.map(e=>e.id===detail.id?updated:e));
+  setDetail(null);
+  alert('明細已更新！');
+};
+
+return(<div className="mo" onClick={()=>setDetail(null)}>
+<div className="mc" style={{maxWidth:1100}} onClick={e=>e.stopPropagation()}>
+<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+<div><h3 style={{fontSize:18,fontWeight:600}}>{detail.name} - 明細編輯</h3>
+<span style={{fontSize:13,color:'#64748b'}}>{detail.client}{comm>0?` · 分潤${(comm*100).toFixed(0)}%`:''} | {detail.date}</span></div>
+<div style={{display:'flex',gap:8}}>
+<button className="bg" onClick={()=>dlD({...detail,rows,shipping:ship,commission:comm,totalRevenue:totals.rev,totalCost:totals.totalCost,totalProfit:totals.profit,totalMargin:totals.margin},'full')} style={{fontSize:12}}>&#128229; 完整版</button>
+<button className="bw" onClick={()=>dlD({...detail,rows,shipping:ship,commission:comm,totalRevenue:totals.rev,totalCost:totals.totalCost,totalProfit:totals.profit,totalMargin:totals.margin},'vendor')} style={{fontSize:12}}>&#128229; 廠商版</button>
+<button className="bs" onClick={()=>setDetail(null)}>關閉</button></div></div>
+
+<div style={{display:'flex',gap:12,marginBottom:16,flexWrap:'wrap'}}>
+<F l="運費（實際）"><input type="number" value={ship} onChange={e=>setShip(+e.target.value)} style={{width:120}}/></F>
+<F l="分潤比例"><input type="number" step=".01" value={comm} onChange={e=>setComm(+e.target.value)} style={{width:100}}/></F>
+</div>
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
+<div style={{background:'#f0f4f8',borderRadius:8,padding:12,textAlign:'center'}}><div style={{fontSize:12,color:'#64748b'}}>營業額</div><div style={{fontSize:18,fontWeight:700}}>${$(totals.rev)}</div></div>
+<div style={{background:'#f0fdf4',borderRadius:8,padding:12,textAlign:'center'}}><div style={{fontSize:12,color:'#64748b'}}>利潤</div><div style={{fontSize:18,fontWeight:700,color:totals.profit>=0?'#059669':'#dc2626'}}>${$(totals.profit)}</div></div>
+<div style={{background:'#fffbeb',borderRadius:8,padding:12,textAlign:'center'}}><div style={{fontSize:12,color:'#64748b'}}>運費</div><div style={{fontSize:18,fontWeight:700}}>${$(ship)}</div></div>
+<div style={{background:'#fef2f2',borderRadius:8,padding:12,textAlign:'center'}}><div style={{fontSize:12,color:'#64748b'}}>毛利率</div><div style={{fontSize:18,fontWeight:700}}>{P(totals.margin)}</div></div>
+</div>
+
+<div style={{overflow:'auto'}}><table><thead><tr>
+<th>品項</th><th style={{background:'#fffbeb'}}>組數</th><th>官網價</th>
+<th style={{background:'#fffbeb'}}>直播價</th><th style={{background:'#fffbeb'}}>進貨價</th>
+<th style={{background:'#e6f7fa'}}>廠商利潤</th><th style={{background:'#e6f7fa'}}>廠商毛利</th>
+<th>淨淨營業額</th><th>淨淨成本</th><th>淨淨利潤</th><th>毛利率</th>
+</tr></thead><tbody>
+{rows.map((r,i)=>{const c=r.calc||{};return(
+<tr key={i}>
+<td style={{fontWeight:500}}>{c.name}</td>
+<td style={{background:'#fffbeb'}}><input type="number" value={r.qty} onChange={e=>upQty(i,+e.target.value)} style={{width:60,padding:'2px 4px',fontSize:13}}/></td>
+<td style={{color:'#64748b'}}>${$(c.retail)}</td>
+<td style={{background:'#fffbeb'}}><input type="number" value={Math.round(c.lp||0)} onChange={e=>upRow(i,'lp',+e.target.value)} style={{width:70,padding:'2px 4px',fontSize:13}}/></td>
+<td style={{background:'#fffbeb'}}><input type="number" value={Math.round(c.cp||0)} onChange={e=>upRow(i,'cp',+e.target.value)} style={{width:70,padding:'2px 4px',fontSize:13}}/></td>
+<td style={{background:'#f8fafc',color:c.vendorProfit>=0?'#059669':'#dc2626'}}>${$(c.vendorProfit)}</td>
+<td style={{background:'#f8fafc'}}><span className={C(c.vendorMargin)}>{P(c.vendorMargin)}</span></td>
+<td>${$(c.netRevenue)}</td><td>${$(c.totalCost)}</td>
+<td style={{fontWeight:600,color:c.netProfit>=0?'#059669':'#dc2626'}}>${$(c.netProfit)}</td>
+<td><span className={C(c.netMargin)}>{P(c.netMargin)}</span></td>
+</tr>)})}
+</tbody></table></div>
+
+<div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
+<button className="bs" onClick={()=>setDetail(null)}>取消</button>
+<button className="bp" onClick={saveDetail}>儲存修改</button>
+</div>
+</div></div>);
+}
+
+/* ==================== 5. 場次總表（可編輯）==================== */
+function T5({events,sE,products,combos}){
+const[yF,setYF]=useState('全部');const[mF,setMF]=useState('全部');const[cF,setCF]=useState('全部');
+const[detail,setDetail]=useState(null);const[editEv,setEditEv]=useState(null);
+
+const ys=['全部',...new Set(events.map(e=>e.year))];
+const ms=['全部',...[...new Set(events.map(e=>e.month))].sort((a,b)=>a-b)];
+const cs=['全部',...new Set(events.map(e=>e.client))];
+const fl=events.filter(e=>(yF==='全部'||e.year===+yF)&&(mF==='全部'||e.month===+mF)&&(cF==='全部'||e.client===cF));
+const tot=fl.reduce((a,e)=>({r:a.r+e.totalRevenue,c:a.c+e.totalCost,p:a.p+e.totalProfit}),{r:0,c:0,p:0});
+tot.m=tot.r>0?tot.p/tot.r:0;
+
+const dl=async(list,name,mode)=>{try{window._dlXlsx(list,name,mode)}catch(e){console.error(e);alert('下載失敗：'+e.message)}};
+const ts=new Date().toISOString().slice(0,10);
+const dlAllFull=()=>dl(fl,'淨淨場次總表_完整版_'+ts,'full');
+const dlAllVendor=()=>dl(fl,'淨淨場次總表_廠商版_'+ts,'vendor');
+const dlD=(ev,mode)=>dl([ev],(ev.name||'報價明細')+'_'+(mode==='vendor'?'廠商版':'完整版'),mode||'full');
+
+const deleteEv=id=>{if(confirm('確定刪除此場次？'))sE(events.filter(e=>e.id!==id))};
+
+const saveEdit=()=>{
+  if(!editEv)return;
+  // Recalc totals
+  const rev=editEv.totalRevenue;const cost=editEv.totalCost;
+  const profit=rev-cost;const margin=rev>0?profit/rev:0;
+  sE(events.map(e=>e.id===editEv.id?{...editEv,totalProfit:profit,totalMargin:margin}:e));
+  setEditEv(null);
+};
+
+if(!events.length)return(<div className="card" style={{padding:40,textAlign:'center',color:'#94a3b8'}}>
+<p style={{fontSize:16,marginBottom:8}}>尚無場次紀錄</p><p style={{fontSize:13}}>在「報價試算」儲存後即可在此查看</p></div>);
+
+return(<div>
+<h2 style={{fontSize:18,fontWeight:600,marginBottom:16}}>場次總表彙整</h2>
+<div className="card" style={{padding:16,marginBottom:16}}>
+<div style={{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap'}}>
+<F l="年度"><select value={yF} onChange={e=>setYF(e.target.value)} style={{minWidth:100}}>{ys.map(y=><option key={y} value={y}>{y==='全部'?'全部':y+'年'}</option>)}</select></F>
+<F l="月份"><select value={mF} onChange={e=>setMF(e.target.value)} style={{minWidth:100}}>{ms.map(m=><option key={m} value={m}>{m==='全部'?'全部':m+'月'}</option>)}</select></F>
+<F l="廠商"><select value={cF} onChange={e=>setCF(e.target.value)} style={{minWidth:100}}>{cs.map(c=><option key={c} value={c}>{c}</option>)}</select></F>
+<div style={{flex:1}}/>
+<button className="bg" onClick={dlAllFull} style={{marginRight:8}}>&#128229; 完整版下載</button>
+<button className="bw" onClick={dlAllVendor}>&#128229; 廠商版下載</button>
+</div></div>
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
+<div className="sc s1"><div style={{fontSize:12,opacity:.9}}>篩選場次</div><div style={{fontSize:28,fontWeight:700}}>{fl.length}</div></div>
+<div className="sc s2"><div style={{fontSize:12,opacity:.9}}>累計營業額</div><div style={{fontSize:22,fontWeight:700}}>${$(tot.r)}</div></div>
+<div className="sc s3"><div style={{fontSize:12,opacity:.9}}>累計利潤</div><div style={{fontSize:22,fontWeight:700}}>${$(tot.p)}</div></div>
+<div className="sc s4"><div style={{fontSize:12,opacity:.9}}>平均毛利率</div><div style={{fontSize:22,fontWeight:700}}>{P(tot.m)}</div></div>
+</div>
+
+<div className="card" style={{overflow:'auto'}}><table><thead><tr>
+<th>場次</th><th>廠商</th><th>日期</th><th>營業額</th><th>成本</th><th>運費</th><th>利潤</th><th>毛利率</th><th>操作</th>
+</tr></thead><tbody>
+{fl.map(e=>(
+<tr key={e.id}>
+<td style={{fontWeight:500}}>{e.name}</td>
+<td><span className="tag tbl">{e.client}</span>{e.commission>0&&<span style={{fontSize:11,color:'#d97706',marginLeft:4}}>({(e.commission*100).toFixed(0)}%)</span>}</td>
+<td>{e.date}</td>
+<td>${$(e.totalRevenue)}</td><td>${$(e.totalCost)}</td><td>${$(e.shipping||0)}</td>
+<td style={{fontWeight:600,color:e.totalProfit>=0?'#059669':'#dc2626'}}>${$(e.totalProfit)}</td>
+<td><span className={C(e.totalMargin)}>{P(e.totalMargin)}</span></td>
+<td style={{whiteSpace:'nowrap'}}>
+<button className="bp" onClick={()=>setDetail(e)} style={{fontSize:12,padding:'4px 10px',marginRight:4}}>明細</button>
+<button className="bw" onClick={()=>setEditEv({...e})} style={{fontSize:12,padding:'4px 10px',marginRight:4}}>編輯</button>
+<button className="bs" onClick={()=>dlD(e,'full')} style={{fontSize:12,padding:'4px 8px',marginRight:2}} title="完整版">&#128229;</button>
+<button style={{fontSize:12,padding:'4px 8px',marginRight:4,background:'#fef3c7',border:'1px solid #f59e0b',borderRadius:8,cursor:'pointer'}} onClick={()=>dlD(e,'vendor')} title="廠商版">&#128230;</button>
+<button className="bd" onClick={()=>deleteEv(e.id)} style={{fontSize:12}}>刪除</button>
+</td></tr>))}
+</tbody></table></div>
+
+{/* 明細 Modal（可編輯） */}
+{detail&&<DetailModal detail={detail} setDetail={setDetail} dlD={dlD} events={events} sE={sE}/>}
+
+{/* 編輯 Modal */}
+{editEv&&<div className="mo" onClick={()=>setEditEv(null)}>
+<div className="mc" style={{maxWidth:600}} onClick={e=>e.stopPropagation()}>
+<h3 style={{fontSize:18,fontWeight:600,marginBottom:16}}>編輯場次：{editEv.name}</h3>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+<F l="場次名稱"><input type="text" value={editEv.name} onChange={e=>setEditEv({...editEv,name:e.target.value})} style={{width:'100%'}}/></F>
+<F l="日期"><input type="text" value={editEv.date} onChange={e=>setEditEv({...editEv,date:e.target.value})} style={{width:'100%'}}/></F>
+<F l="廠商"><input type="text" value={editEv.client} onChange={e=>setEditEv({...editEv,client:e.target.value})} style={{width:'100%'}}/></F>
+<F l="分潤比例"><input type="number" step=".01" value={editEv.commission||0} onChange={e=>setEditEv({...editEv,commission:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="淨淨營業額"><input type="number" value={editEv.totalRevenue} onChange={e=>setEditEv({...editEv,totalRevenue:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="總成本（含運費、分潤）"><input type="number" value={editEv.totalCost} onChange={e=>setEditEv({...editEv,totalCost:+e.target.value})} style={{width:'100%'}}/></F>
+<F l="運費（實際）"><input type="number" value={editEv.shipping||0} onChange={e=>setEditEv({...editEv,shipping:+e.target.value})} style={{width:'100%'}}/></F>
+</div>
+<div className="ib" style={{marginTop:16}}>
+利潤預覽：<b style={{color:editEv.totalRevenue-editEv.totalCost>=0?'#059669':'#dc2626'}}>${$(editEv.totalRevenue-editEv.totalCost)}</b>
+　毛利率：<b>{P(editEv.totalRevenue>0?(editEv.totalRevenue-editEv.totalCost)/editEv.totalRevenue:0)}</b>
+</div>
+<div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
+<button className="bs" onClick={()=>setEditEv(null)}>取消</button>
+<button className="bp" onClick={saveEdit}>儲存修改</button>
+</div></div></div>}
+</div>);
+}
+
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
+</body>
+</html>
