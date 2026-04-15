@@ -269,6 +269,33 @@ async function checkAdmin(){
 const _GH={user:'nini-lgtm',repo:'jj-quote',branch:'master'};
 function getGHToken(){return localStorage.getItem('jj_gh_token')||'';}
 function setGHToken(t){localStorage.setItem('jj_gh_token',t);}
+// 從雲端拉最新資料（用於合併）
+async function fetchCloudData(){
+  try{
+    const url='https://raw.githubusercontent.com/nini-lgtm/jj-quote/master/data.js?t='+Date.now();
+    const r=await fetch(url);
+    if(!r.ok)return null;
+    const txt=await r.text();
+    const m=txt.match(/window\.JJ_DATA\s*=\s*(\{[\s\S]*\});/);
+    return m?JSON.parse(m[1]):null;
+  }catch(e){return null}
+}
+// 智慧合併：events/clients 用 ID 去重合併（雙方都保留），products/combos 以本機為準
+function mergeData(local,cloud){
+  if(!cloud)return local;
+  const mergeById=(a=[],b=[])=>{
+    const map=new Map();
+    [...b,...a].forEach(x=>{if(x&&x.id!=null)map.set(x.id,x)});
+    return Array.from(map.values());
+  };
+  return{
+    p:local.p,  // 產品以本機為主
+    c:local.c,  // 組合以本機為主
+    cl:mergeById(local.cl,cloud.cl),  // 客戶合併（雙方都保留）
+    ev:mergeById(local.ev,cloud.ev),  // 場次合併（雙方都保留）
+    savedAt:local.savedAt
+  };
+}
 async function saveToGitHub(content){
   let token=getGHToken();
   if(!token){
@@ -414,7 +441,20 @@ const saveToFile=async()=>{
   }
   // 驗證管理員密碼（一定會執行）
   if(!await checkAdmin())return;
-  const data={p:products,c:combos,cl:clients,ev:events,savedAt:new Date().toISOString()};
+  // 先拉雲端最新資料，合併後再儲存（避免覆蓋同事的變更）
+  const cloud=await fetchCloudData();
+  const local={p:products,c:combos,cl:clients,ev:events};
+  const merged=mergeData(local,cloud);
+  // 檢測是否有合併進來的新資料
+  const addedEv=(merged.ev.length||0)-(events.length||0);
+  const addedCl=(merged.cl.length||0)-(clients.length||0);
+  if(addedEv>0||addedCl>0){
+    if(!confirm(`偵測到雲端有新資料：\n${addedEv>0?`· ${addedEv} 筆新場次\n`:''}${addedCl>0?`· ${addedCl} 位新客戶\n`:''}\n系統會自動合併後儲存，確定繼續？`)){return;}
+    // 同步合併結果到當前 state（這樣 UI 會立即更新）
+    if(addedEv>0)sE(merged.ev);
+    if(addedCl>0)sCl(merged.cl);
+  }
+  const data={p:merged.p,c:merged.c,cl:merged.cl,ev:merged.ev,savedAt:new Date().toISOString()};
   const content='// 淨淨報價系統 - 資料儲存檔\n// 此檔案由系統自動產生，請勿手動修改\n// 最後更新：'+new Date().toLocaleString('zh-TW')+'\nwindow.JJ_DATA = '+JSON.stringify(data,null,2)+';\n';
   let localOk=false;
   // 優先使用 File System Access API（Chrome/Edge 支援）
