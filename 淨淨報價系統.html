@@ -101,7 +101,7 @@ var pC=function(v){return v>=0?'color:#059669;font-weight:bold':'color:#dc2626;f
 
 function makeEvDetail(ev,isV){
   var rows=ev.rows||[];if(!rows.length)return '';
-  var cols=isV?7:11;
+  var cols=isV?7:12;
   var h='<table style="border-collapse:collapse;width:100%;margin-top:24px">';
   h+='<tr><td colspan="'+cols+'" style="padding:14px 0 6px;border:none"><b style="font-size:14px;color:#1A6A75">'+
     (ev.name||'')+' — 報價明細</b><br><span style="font-size:11px;color:#64748b">'+
@@ -122,7 +122,7 @@ function makeEvDetail(ev,isV){
   if(isV){
     ['品項','組數','官網價','直播價','進貨價','廠商利潤','廠商毛利'].forEach(function(t){h+='<th style="'+hd+'">'+t+'</th>'});
   }else{
-    ['品項','組數','官網價','直播價','進貨價','廠商利潤','廠商毛利','淨淨營業額','淨淨成本','淨淨利潤','毛利率'].forEach(function(t){h+='<th style="'+hd+'">'+t+'</th>'});
+    ['品項','組數','官網價','直播價','進貨價','廠商利潤','廠商毛利','淨淨營業額','單位成本','淨淨成本','淨淨利潤','毛利率'].forEach(function(t){h+='<th style="'+hd+'">'+t+'</th>'});
   }
   h+='</tr>';
   rows.forEach(function(r,i){
@@ -136,7 +136,9 @@ function makeEvDetail(ev,isV){
     '<td style="'+td0+';text-align:right;'+pC(c.vendorProfit)+'">$'+N(c.vendorProfit)+'</td>'+
     '<td style="'+td0+';text-align:center">'+P(c.vendorMargin)+'</td>';
     if(!isV){
+      var _uc=c.unitCost||(r.qty?(c.totalCost||0)/r.qty:0);
       h+='<td style="'+td0+';text-align:right">$'+N(c.netRevenue)+'</td>'+
+      '<td style="'+td0+';text-align:right">$'+N(_uc)+'</td>'+
       '<td style="'+td0+';text-align:right">$'+N(c.totalCost)+'</td>'+
       '<td style="'+td0+';text-align:right;'+pC(c.netProfit)+'">$'+N(c.netProfit)+'</td>'+
       '<td style="'+td0+';text-align:center">'+P(c.netMargin)+'</td>';
