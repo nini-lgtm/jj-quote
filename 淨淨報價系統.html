@@ -730,7 +730,11 @@ const[showAC,setSAC]=useState(false);
 const[tierF,setTierF]=useState('all');
 const[clQ,setClQ]=useState('');
 const filteredCl=useMemo(()=>clients.filter(c=>{
-  if(tierF!=='all'&&c.tier!==tierF)return false;
+  if(tierF!=='all'){
+    // 支援按 tier 或 stype 篩選（直播主/團購主等細分類）
+    if(tierF==='live'){if(c.stype!=='直播主')return false}
+    else if(c.tier!==tierF)return false;
+  }
   if(clQ&&!c.name.toLowerCase().includes(clQ.toLowerCase()))return false;
   return true;
 }),[clients,tierF,clQ]);
@@ -806,7 +810,7 @@ return(<div>
 <F l="場次名稱"><input type="text" placeholder="例：11504月直播" value={eName} onChange={e=>setEN(e.target.value)} style={{width:180}}/></F>
 <F l="日期"><input type="text" placeholder="YYYY-MM-DD" value={eDate} onChange={e=>setED(e.target.value)} style={{width:120}}/></F>
 <F l="廠商類型"><select value={tierF} onChange={e=>{setTierF(e.target.value);setClQ('')}} style={{minWidth:100}}>
-<option value="all">全部</option><option value="dp">經銷商</option><option value="cp">特約商</option><option value="sp">特殊</option>
+<option value="all">全部</option><option value="dp">經銷商</option><option value="cp">特約商</option><option value="live">直播主</option><option value="sp">特殊</option>
 </select></F>
 <F l="搜尋廠商"><input type="text" placeholder="輸入名稱搜尋..." value={clQ} onChange={e=>setClQ(e.target.value)} style={{width:140}}/></F>
 <F l="廠商名稱"><div style={{display:'flex',gap:4}}>
@@ -1001,10 +1005,19 @@ function ViewVendorPerf(){
   const tierMap={'dp':'經銷','cp':'特約','sp':'特殊'};
   const allYears=['全部',...new Set(events.map(e=>e.year).filter(Boolean))];
   const allMonths=['全部',...[...new Set(events.map(e=>e.month).filter(Boolean))].sort((a,b)=>a-b)];
-  // 查找事件的 tier（優先用事件上的，否則從 clients 查）
+  // 查找事件的 tier 及 stype
   const evTier=e=>{if(e.tier)return e.tier;const c=(clients||[]).find(c=>c.name===e.client);return c?.tier||'cp';};
+  const evStype=e=>{const c=(clients||[]).find(c=>c.name===e.client);return c?.stype||'';};
   // 先按年月+類型篩選
-  const fEv=events.filter(e=>(vyF==='全部'||e.year===+vyF)&&(vmF==='全部'||e.month===+vmF)&&(vtF==='all'||evTier(e)===vtF));
+  const fEv=events.filter(e=>{
+    if(vyF!=='全部'&&e.year!==+vyF)return false;
+    if(vmF!=='全部'&&e.month!==+vmF)return false;
+    if(vtF!=='all'){
+      if(vtF==='live'){if(evStype(e)!=='直播主')return false}
+      else if(evTier(e)!==vtF)return false;
+    }
+    return true;
+  });
   const byClient={};fEv.forEach(e=>{const k=e.client||'未知';if(!byClient[k])byClient[k]={rev:0,profit:0,cost:0,count:0,comm:0,events:[]};
     byClient[k].rev+=e.totalRevenue;byClient[k].profit+=e.totalProfit;byClient[k].cost+=e.totalCost;byClient[k].count++;byClient[k].comm=e.commission||byClient[k].comm;byClient[k].events.push(e)});
   const allNames=['全部',...Object.keys(byClient).sort()];
@@ -1022,7 +1035,7 @@ function ViewVendorPerf(){
   <F l="月份"><select value={vmF} onChange={e=>setVmF(e.target.value)} style={{minWidth:100}}>
   {allMonths.map(m=><option key={m} value={m}>{m==='全部'?'全部月份':m+'月'}</option>)}</select></F>
   <F l="類型"><select value={vtF} onChange={e=>setVtF(e.target.value)} style={{minWidth:100}}>
-  <option value="all">全部類型</option><option value="dp">經銷</option><option value="cp">特約</option><option value="sp">特殊</option>
+  <option value="all">全部類型</option><option value="dp">經銷</option><option value="cp">特約</option><option value="live">直播主</option><option value="sp">特殊</option>
   </select></F>
   <F l="廠商"><select value={vF} onChange={e=>setVF(e.target.value)} style={{minWidth:160}}>
   {allNames.map(n=><option key={n} value={n}>{n==='全部'?'全部廠商 ('+Object.keys(byClient).length+')':n}</option>)}
