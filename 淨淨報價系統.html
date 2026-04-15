@@ -99,23 +99,25 @@ var td0='padding:6px 10px;border:1px solid #e2e8f0;font-size:12px';
 var alt='background:#EDF5F7';
 var pC=function(v){return v>=0?'color:#059669;font-weight:bold':'color:#dc2626;font-weight:bold'};
 
-function makeEvDetail(ev,isV){
+function makeEvDetail(ev,isV,skipHeader){
   var rows=ev.rows||[];if(!rows.length)return '';
   var cols=isV?7:12;
-  var h='<table style="border-collapse:collapse;width:100%;margin-top:24px">';
-  h+='<tr><td colspan="'+cols+'" style="padding:14px 0 6px;border:none"><b style="font-size:14px;color:#1A6A75">'+
-    (ev.name||'')+' — 報價明細</b><br><span style="font-size:11px;color:#64748b">'+
-    (ev.client||'')+(ev.commission>0?' · 分潤'+(ev.commission*100).toFixed(0)+'%':'')+' ｜ '+(ev.date||'')+'</span></td></tr>';
-  // 摘要
-  if(isV){
-    h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
-    h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
-    h+='<td colspan="2" style="border:none;padding:6px"></td></tr>';
-  }else{
-    h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
-    h+='<td colspan="3" style="border:none;padding:6px;'+pC(ev.totalProfit)+'"><b>利潤</b> $'+N(ev.totalProfit)+'</td>';
-    h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
-    h+='<td colspan="3" style="border:none;padding:6px"><b>毛利率</b> '+P(ev.totalMargin)+'</td></tr>';
+  var h='<table style="border-collapse:collapse;width:100%;margin-top:'+(skipHeader?'8':'24')+'px">';
+  if(!skipHeader){
+    h+='<tr><td colspan="'+cols+'" style="padding:14px 0 6px;border:none"><b style="font-size:14px;color:#1A6A75">'+
+      (ev.name||'')+' — 報價明細</b><br><span style="font-size:11px;color:#64748b">'+
+      (ev.client||'')+(ev.commission>0?' · 分潤'+(ev.commission*100).toFixed(0)+'%':'')+' ｜ '+(ev.date||'')+'</span></td></tr>';
+    // 摘要
+    if(isV){
+      h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
+      h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
+      h+='<td colspan="2" style="border:none;padding:6px"></td></tr>';
+    }else{
+      h+='<tr><td colspan="3" style="border:none;padding:6px"><b>營業額</b> $'+N(ev.totalRevenue)+'</td>';
+      h+='<td colspan="3" style="border:none;padding:6px;'+pC(ev.totalProfit)+'"><b>利潤</b> $'+N(ev.totalProfit)+'</td>';
+      h+='<td colspan="2" style="border:none;padding:6px"><b>運費</b> $'+N(ev.shipping||0)+'</td>';
+      h+='<td colspan="3" style="border:none;padding:6px"><b>毛利率</b> '+P(ev.totalMargin)+'</td></tr>';
+    }
   }
   // 表頭
   h+='<tr>';
@@ -163,50 +165,70 @@ window._dlXlsx=function(evList,fileName,mode){
   '<span style="font-size:18px;color:#1A6A75;margin-left:10px">'+(isV?'報價明細':'報價總表')+'</span></div>'+
   '<div style="font-size:12px;color:#64748b;margin-bottom:12px">匯出日期：'+new Date().toLocaleDateString('zh-TW')+' ｜ 共 '+evList.length+' 場'+(isV?' ｜ 廠商版':'')+'</div>';
 
-  // 摘要卡片
-  html+='<table style="margin-bottom:16px"><tr>';
-  html+='<td style="padding:8px 20px;background:#f0f7f8"><div style="font-size:10px;color:#64748b">累計營業額</div><div style="font-size:18px;font-weight:bold;color:#1A6A75">$'+N(totR)+'</div></td>';
-  if(!isV){
-    html+='<td style="padding:8px 20px;background:#f0fdf4"><div style="font-size:10px;color:#64748b">累計利潤</div><div style="font-size:18px;font-weight:bold;'+pC(totP)+'">$'+N(totP)+'</div></td>';
-  }
-  html+='<td style="padding:8px 20px;background:#fffbeb"><div style="font-size:10px;color:#64748b">累計運費</div><div style="font-size:18px;font-weight:bold">$'+N(totS)+'</div></td>';
-  if(!isV){
-    html+='<td style="padding:8px 20px;background:#fef2f2"><div style="font-size:10px;color:#64748b">平均毛利率</div><div style="font-size:18px;font-weight:bold">'+P(totR>0?totP/totR:0)+'</div></td>';
-  }
-  html+='</tr></table>';
+  var isSingle=(evList.length===1);
 
-  // 場次總表
-  html+='<table style="border-collapse:collapse;width:100%"><tr>';
-  if(isV){
-    ['場次名稱','廠商','日期','營業額','運費'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
-  }else{
-    ['場次名稱','廠商','日期','分潤','營業額','總成本','運費','利潤','毛利率'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
-  }
-  html+='</tr>';
-  evList.forEach(function(e,i){
-    var bg=i%2===0?alt:'';
-    html+='<tr style="'+(bg?bg:'')+'">'+
-    '<td style="'+td0+';font-weight:bold">'+(e.name||'')+'</td>'+
-    '<td style="'+td0+'">'+(e.client||'')+'</td>'+
-    '<td style="'+td0+'">'+(e.date||'')+'</td>';
+  if(!isSingle){
+    // 摘要卡片
+    html+='<table style="margin-bottom:16px"><tr>';
+    html+='<td style="padding:8px 20px;background:#f0f7f8"><div style="font-size:10px;color:#64748b">累計營業額</div><div style="font-size:18px;font-weight:bold;color:#1A6A75">$'+N(totR)+'</div></td>';
     if(!isV){
-      html+='<td style="'+td0+';text-align:center">'+(e.commission>0?(e.commission*100).toFixed(0)+'%':'—')+'</td>';
+      html+='<td style="padding:8px 20px;background:#f0fdf4"><div style="font-size:10px;color:#64748b">累計利潤</div><div style="font-size:18px;font-weight:bold;'+pC(totP)+'">$'+N(totP)+'</div></td>';
     }
-    html+='<td style="'+td0+';text-align:right">$'+N(e.totalRevenue)+'</td>';
+    html+='<td style="padding:8px 20px;background:#fffbeb"><div style="font-size:10px;color:#64748b">累計運費</div><div style="font-size:18px;font-weight:bold">$'+N(totS)+'</div></td>';
     if(!isV){
-      html+='<td style="'+td0+';text-align:right">$'+N(e.totalCost)+'</td>';
+      html+='<td style="padding:8px 20px;background:#fef2f2"><div style="font-size:10px;color:#64748b">平均毛利率</div><div style="font-size:18px;font-weight:bold">'+P(totR>0?totP/totR:0)+'</div></td>';
     }
-    html+='<td style="'+td0+';text-align:right">$'+N(e.shipping||0)+'</td>';
-    if(!isV){
-      html+='<td style="'+td0+';text-align:right;'+pC(e.totalProfit)+'">$'+N(e.totalProfit)+'</td>'+
-      '<td style="'+td0+';text-align:center">'+P(e.totalMargin)+'</td>';
+    html+='</tr></table>';
+
+    // 場次總表
+    html+='<table style="border-collapse:collapse;width:100%"><tr>';
+    if(isV){
+      ['場次名稱','廠商','日期','營業額','運費'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
+    }else{
+      ['場次名稱','廠商','日期','分潤','營業額','總成本','運費','利潤','毛利率'].forEach(function(t){html+='<th style="'+hd+'">'+t+'</th>'});
     }
     html+='</tr>';
-  });
-  html+='</table>';
+    evList.forEach(function(e,i){
+      var bg=i%2===0?alt:'';
+      html+='<tr style="'+(bg?bg:'')+'">'+
+      '<td style="'+td0+';font-weight:bold">'+(e.name||'')+'</td>'+
+      '<td style="'+td0+'">'+(e.client||'')+'</td>'+
+      '<td style="'+td0+'">'+(e.date||'')+'</td>';
+      if(!isV){
+        html+='<td style="'+td0+';text-align:center">'+(e.commission>0?(e.commission*100).toFixed(0)+'%':'—')+'</td>';
+      }
+      html+='<td style="'+td0+';text-align:right">$'+N(e.totalRevenue)+'</td>';
+      if(!isV){
+        html+='<td style="'+td0+';text-align:right">$'+N(e.totalCost)+'</td>';
+      }
+      html+='<td style="'+td0+';text-align:right">$'+N(e.shipping||0)+'</td>';
+      if(!isV){
+        html+='<td style="'+td0+';text-align:right;'+pC(e.totalProfit)+'">$'+N(e.totalProfit)+'</td>'+
+        '<td style="'+td0+';text-align:center">'+P(e.totalMargin)+'</td>';
+      }
+      html+='</tr>';
+    });
+    html+='</table>';
+  }else{
+    // 單場：先顯示 日期/廠商/營業額 等欄位資訊，再顯示明細
+    var ev=evList[0];
+    html+='<table style="margin-bottom:8px;border-collapse:collapse"><tr>'+
+      '<td style="padding:6px 14px;background:#f0f7f8;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">日期</div><div style="font-size:14px;font-weight:bold">'+(ev.date||'-')+'</div></td>'+
+      '<td style="padding:6px 14px;background:#f0f7f8;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">廠商</div><div style="font-size:14px;font-weight:bold">'+(ev.client||'-')+'</div></td>'+
+      '<td style="padding:6px 14px;background:#f0f7f8;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">場次名稱</div><div style="font-size:14px;font-weight:bold">'+(ev.name||'-')+'</div></td>'+
+      '<td style="padding:6px 14px;background:#f0f7f8;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">營業額</div><div style="font-size:14px;font-weight:bold;color:#1A6A75">$'+N(ev.totalRevenue)+'</div></td>'+
+      '<td style="padding:6px 14px;background:#fffbeb;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">運費</div><div style="font-size:14px;font-weight:bold">$'+N(ev.shipping||0)+'</div></td>';
+    if(!isV){
+      html+='<td style="padding:6px 14px;background:#f0fdf4;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">分潤</div><div style="font-size:14px;font-weight:bold">'+(ev.commission>0?(ev.commission*100).toFixed(0)+'%':'—')+'</div></td>'+
+      '<td style="padding:6px 14px;background:#f0fdf4;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">總成本</div><div style="font-size:14px;font-weight:bold">$'+N(ev.totalCost)+'</div></td>'+
+      '<td style="padding:6px 14px;background:#fef2f2;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">利潤</div><div style="font-size:14px;font-weight:bold;'+pC(ev.totalProfit)+'">$'+N(ev.totalProfit)+'</div></td>'+
+      '<td style="padding:6px 14px;background:#fef2f2;border:1px solid #e2e8f0"><div style="font-size:10px;color:#64748b">毛利率</div><div style="font-size:14px;font-weight:bold">'+P(ev.totalMargin)+'</div></td>';
+    }
+    html+='</tr></table>';
+  }
 
   // 每場明細
-  evList.forEach(function(ev){html+=makeEvDetail(ev,isV)});
+  evList.forEach(function(ev){html+=makeEvDetail(ev,isV,isSingle)});
 
   html+='<div style="margin-top:24px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center">淨淨 Clean Clean 報價管理系統 · 自動產生</div>';
   html+='</body></html>';
