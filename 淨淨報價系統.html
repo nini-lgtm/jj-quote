@@ -372,6 +372,32 @@ useEffect(()=>{
   return()=>window.removeEventListener('beforeunload',handler);
 },[]);
 
+/* 從 GitHub 同步最新資料（拉回同仁存的資料） */
+const syncFromCloud=async()=>{
+  if(!confirm('將從雲端載入最新資料，本機未儲存的變更會遺失。確定繼續？'))return;
+  try{
+    const url='https://raw.githubusercontent.com/nini-lgtm/jj-quote/master/data.js?t='+Date.now();
+    const r=await fetch(url);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const txt=await r.text();
+    const m=txt.match(/window\.JJ_DATA\s*=\s*(\{[\s\S]*\});/);
+    if(!m)throw new Error('無法解析 data.js');
+    const cloud=JSON.parse(m[1]);
+    const cloudTime=cloud.savedAt||'';
+    const local=JSON.parse(localStorage.getItem(SK)||'{}');
+    const localTime=local.savedAt||'';
+    let msg='雲端最後儲存：'+(cloudTime?new Date(cloudTime).toLocaleString('zh-TW'):'無')+'\n本機最後儲存：'+(localTime?new Date(localTime).toLocaleString('zh-TW'):'無');
+    if(cloudTime && localTime && cloudTime<localTime){
+      if(!confirm(msg+'\n\n⚠️ 雲端資料比本機舊，仍要覆蓋？'))return;
+    }
+    localStorage.setItem(SK,JSON.stringify(cloud));
+    alert('✅ 已同步雲端最新資料！\n\n'+msg+'\n\n即將重新整理頁面...');
+    location.reload();
+  }catch(e){
+    alert('同步失敗：'+e.message+'\n\n請檢查網路連線');
+  }
+};
+
 /* 儲存資料到外部檔案（data.js）- 支援直接覆蓋寫入 + GitHub 自動部署，需管理員權限 */
 const saveToFile=async()=>{
   // 先在使用者點擊的同步階段取得檔案句柄（避免 user gesture 過期）
@@ -465,6 +491,7 @@ return(<div style={{minHeight:'100vh'}}>
 <p style={{fontSize:13,opacity:.8,margin:'4px 0 0'}}>產品管理 · 組合設定 · 廠商報價 · 毛利分析</p></div></div>
 <div style={{display:'flex',gap:8,alignItems:'center'}}>
 {!saved&&<span style={{background:'#fbbf24',color:'#78350f',padding:'4px 10px',borderRadius:6,fontSize:12,fontWeight:600,animation:'pulse 2s infinite'}}>有未儲存的變更</span>}
+<button onClick={syncFromCloud} style={{background:'#0ea5e9',color:'#fff',border:'none',borderRadius:8,padding:'8px 16px',cursor:'pointer',fontSize:13,fontWeight:600}}>&#9729;&#65039; 從雲端同步</button>
 <button onClick={saveToFile} style={{background:'#10b981',color:'#fff',border:'none',borderRadius:8,padding:'8px 16px',cursor:'pointer',fontSize:13,fontWeight:600}}>&#128190; 儲存資料</button>
 <button onClick={importData} style={{background:'rgba(255,255,255,.15)',color:'#fff',border:'1px solid rgba(255,255,255,.3)',borderRadius:8,padding:'6px 14px',cursor:'pointer',fontSize:13}}>&#128194; 匯入資料</button>
 </div>
@@ -565,7 +592,10 @@ return(<div>
 
 /* ==================== 2. 組合設定 ==================== */
 function T2({combos,sC,products}){
-const[vw,setVw]=useState('card');const[sa,setSa]=useState(false);const[eid,setEid]=useState(null);
+const[sa,setSa]=useState(false);const[eid,setEid]=useState(null);
+const[tierView,setTierView]=useState('sp');
+const tierOpts=[{k:'dp',label:'經銷',bg:'#fff7ed',color:'#92400e'},{k:'cp',label:'特約',bg:'#e6f7fa',color:'#1a6a75'},{k:'sp',label:'特殊',bg:'#fef3c7',color:'#92400e'}];
+const curTier=tierOpts.find(t=>t.k===tierView);
 const inf=c=>{let cost=0,ret=0,tDp=0,tCp=0,tSp=0,ns=[];c.items.forEach(it=>{const p=products.find(x=>x.id===it.pid);if(p){cost+=p.cost*it.qty;ret+=p.retail*it.qty;tDp+=(p.dp||0)*it.qty;tCp+=(p.cp||0)*it.qty;tSp+=(p.sp||0)*it.qty;ns.push(p.name+(it.qty>1?' x'+it.qty:''))}});const dp=c.dp||tDp;const cp=c.cp||tCp;const sp=c.sp||tSp;const mg=sp>0?(sp-cost)/sp:0;return{cost,ret,dp,cp,sp,ns,mg}};
 const del=id=>{if(confirm('確定？'))sC(combos.filter(c=>c.id!==id))};
 const save=data=>{if(eid){sC(combos.map(c=>c.id===eid?{...data,id:eid}:c))}else{sC([...combos,{...data,id:Math.max(0,...combos.map(c=>c.id))+1}])};setEid(null);setSa(false)};
@@ -573,48 +603,31 @@ const edit=id=>{setEid(id);setSa(true)};
 
 return(<div>
 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
+<div style={{display:'flex',gap:12,alignItems:'center'}}>
 <h2 style={{fontSize:18,fontWeight:600}}>產品組合設定</h2>
-<div style={{display:'flex',gap:8}}>
-<button className={vw==='card'?'bp':'bs'} onClick={()=>setVw('card')} style={{fontSize:12,padding:'6px 12px'}}>卡片</button>
-<button className={vw==='table'?'bp':'bs'} onClick={()=>setVw('table')} style={{fontSize:12,padding:'6px 12px'}}>表格</button>
-<button className="bp" onClick={()=>{setEid(null);setSa(true)}}>+ 新增組合</button>
-</div></div>
-
-{vw==='card'?
-<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(380px,1fr))',gap:16}}>
-{combos.map(c=>{const i=inf(c);return(
-<div key={c.id} className="card" style={{padding:16}}>
-<div style={{display:'flex',justifyContent:'space-between'}}><h3 style={{fontSize:15,fontWeight:600,marginBottom:8}}>{c.name}</h3>
-<div style={{display:'flex',gap:4}}><button className="bs" onClick={()=>edit(c.id)} style={{fontSize:11,padding:'3px 8px'}}>編輯</button><button className="bd" onClick={()=>del(c.id)} style={{fontSize:11,padding:'3px 8px'}}>刪除</button></div></div>
-<div style={{fontSize:12,color:'#64748b',marginBottom:8}}>{i.ns.join(' + ')}</div>
-<div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr 1fr 1fr 1fr',gap:8,fontSize:13}}>
-<div><span style={{color:'#94a3b8'}}>官網價</span><br/><b>${$(c.retail||i.ret)}</b></div>
-<div><span style={{color:'#94a3b8'}}>經銷價</span><br/><b>${$(i.dp)}</b></div>
-<div><span style={{color:'#94a3b8'}}>特約價</span><br/><b>${$(i.cp)}</b></div>
-<div><span style={{color:'#94a3b8'}}>特殊價</span><br/><b>${$(i.sp)}</b></div>
-<div><span style={{color:'#94a3b8'}}>成本</span><br/><b>${$(i.cost)}</b></div>
-<div><span style={{color:'#94a3b8'}}>毛利率</span><br/><span className={C(i.mg)}>{P(i.mg)}</span></div>
-</div></div>)})}
+<div style={{display:'flex',gap:4,background:'#f1f5f9',borderRadius:8,padding:2}}>
+{tierOpts.map(t=><button key={t.k} onClick={()=>setTierView(t.k)} style={{padding:'5px 14px',borderRadius:6,border:'none',fontSize:13,fontWeight:tierView===t.k?600:400,cursor:'pointer',background:tierView===t.k?t.bg:'transparent',color:tierView===t.k?t.color:'#64748b'}}>{t.label}</button>)}
 </div>
-:
+</div>
+<button className="bp" onClick={()=>{setEid(null);setSa(true)}}>+ 新增組合</button>
+</div>
+
 <div className="card" style={{overflow:'auto'}}><table><thead><tr>
-<th>組合名稱</th><th>組合內容</th><th>官網價</th><th style={{background:'#fff7ed'}}>經銷價</th><th style={{background:'#e6f7fa'}}>特約價</th><th style={{background:'#fef3c7'}}>特殊價</th><th>成本</th><th>毛利率(特殊)</th><th>操作</th>
+<th>組合名稱</th><th>組合內容</th><th>官網價</th><th style={{background:curTier.bg}}>{curTier.label}價</th><th>成本</th><th style={{background:curTier.bg}}>{curTier.label}毛利率</th><th>操作</th>
 </tr></thead><tbody>
-{combos.map(c=>{const i=inf(c);return(
+{combos.map(c=>{const i=inf(c);const price=i[tierView]||0;const mg=price>0?(price-i.cost)/price:0;return(
 <tr key={c.id}>
 <td style={{fontWeight:500}}>{c.name}</td>
 <td style={{fontSize:12,color:'#64748b',maxWidth:300}}>{i.ns.join(' + ')}</td>
 <td>${$(c.retail||i.ret)}</td>
-<td style={{background:'#fff7ed'}}>${$(i.dp)}</td>
-<td style={{background:'#e6f7fa'}}>${$(i.cp)}</td>
-<td style={{background:'#fef3c7',fontWeight:600}}>${$(i.sp)}</td>
+<td style={{background:curTier.bg,fontWeight:600}}>${$(price)}</td>
 <td>${$(i.cost)}</td>
-<td><span className={C(i.mg)}>{P(i.mg)}</span></td>
+<td style={{background:curTier.bg}}><span className={C(mg)}>{P(mg)}</span></td>
 <td style={{whiteSpace:'nowrap'}}>
 <button className="bs" onClick={()=>edit(c.id)} style={{fontSize:12,padding:'4px 10px',marginRight:4}}>編輯</button>
 <button className="bd" onClick={()=>del(c.id)} style={{fontSize:12}}>刪除</button>
 </td></tr>)})}
-</tbody></table></div>}
+</tbody></table></div>
 
 {sa&&<CModal products={products} combo={eid?combos.find(c=>c.id===eid):null} onSave={save} onClose={()=>{setSa(false);setEid(null)}}/>}
 </div>);
