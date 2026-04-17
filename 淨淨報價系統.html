@@ -2205,11 +2205,53 @@ return(<div>
 }
 
 /* ==================== 明細編輯元件 ==================== */
-function DetailModal({detail,setDetail,dlD,events,sE}){
+function DetailModal({detail,setDetail,dlD,events,sE,products,combos}){
 const[rows,setRows]=useState(()=>detail.rows.map(r=>({...r,calc:{...r.calc}})));
 const[ship,setShip]=useState(detail.shipping||0);
 const[comm,setComm]=useState(detail.commission||0);
 const[liveRate,setLiveRate]=useState(detail.liveRate||1);
+const[addType,setAddType]=useState('s');
+const[addId,setAddId]=useState(products&&products[0]?products[0].id:0);
+const[addQty,setAddQty]=useState(100);
+
+const rmRow=i=>{
+  if(!confirm('確定刪除此品項？'))return;
+  setRows(rows.filter((_,j)=>j!==i));
+};
+
+const buildNewRow=(type,id,qty)=>{
+  const tier=detail.tier||'cp';
+  let name='',cp=0,retail=0,unitCost=0;
+  if(type==='s'){
+    const p=(products||[]).find(x=>x.id===id);if(!p){alert('找不到產品');return null;}
+    name=p.name;cp=p[tier]||p.cp||0;retail=p.retail||0;unitCost=p.cost||0;
+  }else{
+    const c=(combos||[]).find(x=>x.id===id);if(!c){alert('找不到組合');return null;}
+    name=c.name;cp=c[tier]||0;retail=c.retail||0;
+    (c.items||[]).forEach(it=>{
+      const p=(products||[]).find(x=>x.id===it.pid);
+      if(p){unitCost+=(p.cost||0)*it.qty;if(!cp)cp+=(p[tier]||p.cp||0)*it.qty;if(!retail)retail+=(p.retail||0)*it.qty;}
+    });
+  }
+  const baseLp=retail;
+  const lp=Math.round(baseLp*liveRate);
+  const totalCost=unitCost*qty;
+  const netRevenue=cp*qty;
+  const commAmt=comm>0?netRevenue*comm:0;
+  const netProfit=netRevenue-totalCost-commAmt;
+  const netMargin=netRevenue>0?netProfit/netRevenue:0;
+  const vendorProfit=lp-cp;
+  const vendorMargin=lp>0?vendorProfit/lp:0;
+  const base={type,qty,clp:false,ccp:false};
+  if(type==='s')base.pid=id;else base.cid=id;
+  return{...base,calc:{name,cp,retail,lp,baseLp,unitCost,totalCost,netRevenue,commAmt,netProfit,netMargin,vendorProfit,vendorMargin}};
+};
+
+const addNewRow=()=>{
+  const nr=buildNewRow(addType,addId,addQty||1);
+  if(!nr)return;
+  setRows([...rows,nr]);
+};
 
 const upRow=(i,field,val)=>{
   setRows(rows.map((r,j)=>{
@@ -2310,6 +2352,7 @@ return(<div className="mo" onClick={()=>setDetail(null)}>
 <th style={{background:'#fffbeb'}}>直播價</th><th style={{background:'#fffbeb'}}>進貨價</th>
 <th style={{background:'#e6f7fa'}}>廠商利潤</th><th style={{background:'#e6f7fa'}}>廠商毛利</th>
 <th>淨淨營業額</th><th style={{background:'#fffbeb'}}>單位成本</th><th>淨淨成本</th><th>淨淨利潤</th><th>毛利率</th>
+<th style={{width:48}}>刪除</th>
 </tr></thead><tbody>
 {rows.map((r,i)=>{const c=r.calc||{};return(
 <tr key={i}>
@@ -2325,8 +2368,24 @@ return(<div className="mo" onClick={()=>setDetail(null)}>
 <td>${$(c.totalCost)}</td>
 <td style={{fontWeight:600,color:c.netProfit>=0?'#059669':'#dc2626'}}>${$(c.netProfit)}</td>
 <td><span className={C(c.netMargin)}>{P(c.netMargin)}</span></td>
+<td style={{textAlign:'center'}}><button onClick={()=>rmRow(i)} title="刪除此品項" style={{background:'#fee2e2',color:'#dc2626',border:'1px solid #fca5a5',borderRadius:6,width:28,height:26,cursor:'pointer',fontSize:14,lineHeight:1,padding:0}}>×</button></td>
 </tr>)})}
 </tbody></table></div>
+
+{/* 新增品項 */}
+<div style={{marginTop:12,padding:12,background:'#f0f9ff',border:'1px dashed #38bdf8',borderRadius:10,display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+<span style={{fontWeight:600,color:'#0369a1',fontSize:13}}>➕ 新增品項</span>
+<select value={addType} onChange={e=>{setAddType(e.target.value);const list=e.target.value==='s'?products:combos;setAddId(list&&list[0]?list[0].id:0);}} style={{padding:'4px 8px'}}>
+<option value="s">單品</option><option value="c">組合</option>
+</select>
+<select value={addId} onChange={e=>setAddId(+e.target.value)} style={{padding:'4px 8px',minWidth:200,maxWidth:320}}>
+{(addType==='s'?products:combos).map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
+</select>
+<label style={{fontSize:12,color:'#64748b'}}>組數</label>
+<input type="number" value={addQty} onChange={e=>setAddQty(+e.target.value)} style={{width:80,padding:'4px 8px'}}/>
+<button className="bp" onClick={addNewRow} style={{fontSize:13,padding:'6px 14px'}}>加入</button>
+<span style={{fontSize:11,color:'#64748b',marginLeft:'auto'}}>依 {({'dp':'經銷價','cp':'特約價','sp':'特殊價'})[detail.tier||'cp']} + 目前直播折數 自動帶入</span>
+</div>
 
 <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:20}}>
 <button className="bs" onClick={()=>setDetail(null)}>取消</button>
@@ -2406,8 +2465,8 @@ return(<div>
 </td></tr>))}
 </tbody></table></div>
 
-{/* 明細 Modal（可編輯） */}
-{detail&&<DetailModal detail={detail} setDetail={setDetail} dlD={dlD} events={events} sE={sE}/>}
+{/* 明細 Modal（可編輯、可新增/刪除品項） */}
+{detail&&<DetailModal detail={detail} setDetail={setDetail} dlD={dlD} events={events} sE={sE} products={products} combos={combos}/>}
 
 {/* 編輯 Modal */}
 {editEv&&<div className="mo" onClick={()=>setEditEv(null)}>
