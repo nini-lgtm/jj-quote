@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>淨淨通路經營中心</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>
+// 版本號 — 每次部署自動更新，用於強制瀏覽器抓最新版
+window._APP_VER = '20260417v1542';
+// 如果 URL 沒帶 v 或版本太舊，加上 cache-bust 重新載入
+(function(){
+  if(location.protocol==='file:')return;// 本機不需要
+  var p=new URLSearchParams(location.search);
+  var cur=p.get('v');
+  if(cur!==window._APP_VER){
+    p.set('v',window._APP_VER);
+    location.replace(location.pathname+'?'+p.toString()+location.hash);
+  }
+})();
+</script>
 <script src="./data.js" onerror="window.JJ_DATA=null"></script>
 <script src="./master.js" onerror="window.JJ_MASTER=null"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
