@@ -1180,6 +1180,66 @@ function ARPage(){
       </div>
     </div>
 
+    {/* 月份發票統計（選了特定月份時顯示） */}
+    {monthF!=='all'&&(()=>{
+      const mLabel = (yearF==='all'?'':yearF+'年 ')+monthF+'月';
+      // 已開發票（未收帳款中有發票號碼的）
+      const withInv = filteredDetails.filter(d=>d.inv);
+      const withInvAmt = withInv.reduce((a,d)=>a+d.amt,0);
+      const withInvUnpaid = withInv.reduce((a,d)=>a+d.unpaid,0);
+      // 收集不重複的發票號碼
+      const invNos = [...new Set(withInv.map(d=>d.inv))].sort();
+      // 未開發票
+      const noInv = filteredMissing;
+      const noInvAmt = mTotalAmt;
+      const noInvUnpaid = mTotalUnpaid;
+      const noInvCleared = noInv.filter(d=>d.cleared==='Y').length;
+      // 當月應收總額 = 已開 + 未開
+      const monthTotal = withInvAmt + noInvAmt;
+      return(<div className="card" style={{padding:16,marginBottom:16,border:'1px solid #bae6fd',background:'#f0f9ff'}}>
+        <h3 style={{fontSize:15,fontWeight:600,marginBottom:12,color:'#0369a1'}}>📊 {mLabel} 發票統計</h3>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12,marginBottom:12}}>
+          <div style={{background:'#fff',borderRadius:8,padding:12,border:'1px solid #e2e8f0'}}>
+            <div style={{fontSize:12,color:'#64748b',marginBottom:4}}>當月總應收</div>
+            <div style={{fontSize:22,fontWeight:700}}>${Math.round(monthTotal).toLocaleString()}</div>
+            <div style={{fontSize:11,color:'#64748b',marginTop:2}}>{withInv.length+noInv.length} 筆</div>
+          </div>
+          <div style={{background:'#f0fdf4',borderRadius:8,padding:12,border:'1px solid #bbf7d0'}}>
+            <div style={{fontSize:12,color:'#059669',fontWeight:600,marginBottom:4}}>✅ 已開發票</div>
+            <div style={{fontSize:20,fontWeight:700,color:'#059669'}}>{withInv.length} 筆</div>
+            <div style={{fontSize:12,marginTop:2}}>應收 ${Math.round(withInvAmt).toLocaleString()}</div>
+            <div style={{fontSize:11,color:'#dc2626',marginTop:2}}>未收 ${Math.round(withInvUnpaid).toLocaleString()}</div>
+          </div>
+          <div style={{background:noInv.length>0?'#fef2f2':'#f0fdf4',borderRadius:8,padding:12,border:noInv.length>0?'1px solid #fecaca':'1px solid #bbf7d0'}}>
+            <div style={{fontSize:12,color:noInv.length>0?'#dc2626':'#059669',fontWeight:600,marginBottom:4}}>{noInv.length>0?'❌ 未開發票':'✅ 全部已開'}</div>
+            <div style={{fontSize:20,fontWeight:700,color:noInv.length>0?'#dc2626':'#059669'}}>{noInv.length} 筆</div>
+            {noInv.length>0&&<><div style={{fontSize:12,marginTop:2}}>金額 ${Math.round(noInvAmt).toLocaleString()}</div>
+            <div style={{fontSize:11,color:'#64748b',marginTop:2}}>已結清 {noInvCleared}/{noInv.length} 筆</div></>}
+          </div>
+        </div>
+        {invNos.length>0&&<div style={{background:'#fff',borderRadius:8,padding:12,border:'1px solid #e2e8f0'}}>
+          <div style={{fontSize:12,color:'#64748b',marginBottom:6}}>📋 已開立發票號碼（{invNos.length} 張）</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+            {invNos.map(n=>{
+              const recs=withInv.filter(d=>d.inv===n);
+              const invAmt=recs.reduce((a,d)=>a+d.amt,0);
+              const invUnpaid=recs.reduce((a,d)=>a+d.unpaid,0);
+              return(<div key={n} title={`應收 $${Math.round(invAmt).toLocaleString()} / 未收 $${Math.round(invUnpaid).toLocaleString()}`}
+                style={{padding:'4px 10px',background:invUnpaid>0?'#fef3c7':'#d1fae5',borderRadius:6,fontSize:12,fontWeight:500,
+                  border:invUnpaid>0?'1px solid #f59e0b':'1px solid #6ee7b7',
+                  color:invUnpaid>0?'#92400e':'#065f46',cursor:'default'}}>
+                {n} <span style={{fontSize:10,opacity:.8}}>${Math.round(invAmt).toLocaleString()}</span>
+                {invUnpaid>0&&<span style={{fontSize:10,color:'#dc2626',marginLeft:4}}>欠${Math.round(invUnpaid).toLocaleString()}</span>}
+              </div>);
+            })}
+          </div>
+        </div>}
+        {noInv.length>0&&!showMissing&&<div style={{marginTop:8,textAlign:'center'}}>
+          <button className="bw" onClick={()=>setShowMissing(true)} style={{fontSize:12,color:'#7c3aed'}}>🧾 查看 {noInv.length} 筆未開發票明細 →</button>
+        </div>}
+      </div>);
+    })()}
+
     {/* 未開發票通知區（展開後顯示） */}
     {showMissing&&filteredMissing.length>0&&<div className="card" style={{padding:16,marginBottom:16,border:'2px solid #7c3aed',background:'#faf5ff'}}>
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
