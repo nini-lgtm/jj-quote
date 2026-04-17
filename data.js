@@ -1,6 +1,6 @@
 // 淨淨報價系統 - 資料儲存檔
 // 此檔案由系統自動產生，請勿手動修改
-// 最後更新：2026/04/15 13:43:35
+// 最後更新：2026/4/17 上午11:42:38
 window.JJ_DATA = {
   "p": [
     {
@@ -332,6 +332,17 @@ window.JJ_DATA = {
       "cp": 0,
       "sp": 80,
       "cost": 52.5
+    },
+    {
+      "name": "洗衣精單壓頭",
+      "cat": "洗衣精",
+      "retail": 0,
+      "rp": 0,
+      "dp": 0,
+      "cp": 0,
+      "sp": 0,
+      "cost": 0,
+      "id": 31
     }
   ],
   "c": [
@@ -502,6 +513,172 @@ window.JJ_DATA = {
       "cp": 0,
       "sp": 600,
       "retail": 1314
+    },
+    {
+      "name": "除垢瓶改版*2+家事皂700ml*1+除黴凝膠150ml*1 (贈除垢單噴槍*1+家事皂分裝瓶300ml*1)",
+      "dp": 0,
+      "cp": 0,
+      "sp": 900,
+      "retail": 1658,
+      "items": [
+        {
+          "pid": 4,
+          "qty": 2
+        },
+        {
+          "pid": 7,
+          "qty": 1
+        },
+        {
+          "pid": 9,
+          "qty": 1
+        },
+        {
+          "pid": 6,
+          "qty": 1
+        },
+        {
+          "pid": 8,
+          "qty": 1
+        }
+      ],
+      "id": 11
+    },
+    {
+      "name": "洗衣精 (瓶蓋版*3+單壓頭*1)",
+      "dp": 0,
+      "cp": 0,
+      "sp": 750,
+      "retail": 1550,
+      "items": [
+        {
+          "pid": 14,
+          "qty": 2
+        },
+        {
+          "pid": 13,
+          "qty": 1
+        }
+      ],
+      "id": 12
+    },
+    {
+      "name": "洗衣精 (瓶蓋版*6+單壓頭*2) 贈潔顏慕斯150ml*1",
+      "dp": 0,
+      "cp": 0,
+      "sp": 1620,
+      "retail": 3200,
+      "items": [
+        {
+          "pid": 13,
+          "qty": 4
+        },
+        {
+          "pid": 14,
+          "qty": 2
+        },
+        {
+          "pid": 22,
+          "qty": 1
+        }
+      ],
+      "id": 13
+    },
+    {
+      "name": "洗衣精(瓶蓋版*9+單壓頭*3) 贈沐浴露棉花香*1+剋菌液300ml*1",
+      "dp": 0,
+      "cp": 0,
+      "sp": 2525,
+      "retail": 5300,
+      "items": [
+        {
+          "pid": 19,
+          "qty": 1
+        },
+        {
+          "pid": 13,
+          "qty": 3
+        },
+        {
+          "pid": 14,
+          "qty": 6
+        },
+        {
+          "pid": 2,
+          "qty": 1
+        }
+      ],
+      "id": 14
+    },
+    {
+      "name": "家事清潔組 (除垢瓶蓋版*3+家事皂700ml*1) 贈 單噴槍*1+家事皂分裝瓶*1+除黴凝膠150ml*1",
+      "dp": 0,
+      "cp": 0,
+      "sp": 1065,
+      "retail": 2008,
+      "items": [
+        {
+          "pid": 5,
+          "qty": 2
+        },
+        {
+          "pid": 4,
+          "qty": 1
+        },
+        {
+          "pid": 7,
+          "qty": 1
+        },
+        {
+          "pid": 8,
+          "qty": 1
+        },
+        {
+          "pid": 9,
+          "qty": 1
+        }
+      ],
+      "id": 15
+    },
+    {
+      "name": "沐浴露(棉花/療癒花語)+ 水凝乳300ml (贈無泡潔顏露 150ml*1",
+      "dp": 0,
+      "cp": 0,
+      "sp": 1680,
+      "retail": 3550,
+      "items": [
+        {
+          "pid": 18,
+          "qty": 1
+        },
+        {
+          "pid": 19,
+          "qty": 1
+        },
+        {
+          "pid": 20,
+          "qty": 1
+        },
+        {
+          "pid": 21,
+          "qty": 1
+        }
+      ],
+      "id": 16
+    },
+    {
+      "name": "水凝乳300ML | 2入組",
+      "dp": 0,
+      "cp": 0,
+      "sp": 800,
+      "retail": 1500,
+      "items": [
+        {
+          "pid": 18,
+          "qty": 2
+        }
+      ],
+      "id": 17
     }
   ],
   "cl": [
@@ -3836,214 +4013,202 @@ window.JJ_DATA = {
   ],
   "ev": [
     {
-      "id": 1775996018394,
-      "name": "115範例",
-      "client": "阿清",
+      "id": 1776238527911,
+      "name": "1150422阿清直播",
+      "client": "阿清服飾",
       "commission": 0,
-      "date": "2026-04-12",
+      "tier": "sp",
+      "liveRate": 0.65,
+      "date": "2026-04-15",
       "year": 2026,
       "month": 4,
-      "totalRevenue": 93000,
-      "totalCost": 21844,
-      "totalProfit": 71156,
-      "totalMargin": 0.7651182795698924,
-      "shipping": 10000,
+      "totalRevenue": 7032370,
+      "totalCost": 3914214,
+      "totalProfit": 3118156,
+      "totalMargin": 0.4434004467910534,
+      "shipping": 12000,
       "shipMode": "lump",
       "rows": [
         {
           "type": "s",
-          "pid": 1,
-          "qty": 100,
+          "pid": 24,
+          "qty": 10000,
           "lp": 0,
           "clp": false,
           "cpo": 0,
           "ccp": false,
           "calc": {
-            "name": "淨淨剋菌液500ML",
-            "cp": 310,
-            "dCp": 310,
-            "lp": 790,
-            "dLive": 790,
-            "retail": 790,
-            "vendorProfit": 480,
-            "vendorMargin": 0.6075949367088608,
-            "netRevenue": 31000,
-            "totalCost": 3948,
-            "netProfit": 27052,
-            "netMargin": 0.8726451612903225,
-            "commAmt": 0,
-            "perShip": 0
-          }
-        },
-        {
-          "type": "s",
-          "pid": 1,
-          "qty": 100,
-          "lp": 0,
-          "clp": false,
-          "cpo": 0,
-          "ccp": false,
-          "calc": {
-            "name": "淨淨剋菌液500ML",
-            "cp": 310,
-            "dCp": 310,
-            "lp": 790,
-            "dLive": 790,
-            "retail": 790,
-            "vendorProfit": 480,
-            "vendorMargin": 0.6075949367088608,
-            "netRevenue": 31000,
-            "totalCost": 3948,
-            "netProfit": 27052,
-            "netMargin": 0.8726451612903225,
-            "commAmt": 0,
-            "perShip": 0
-          }
-        },
-        {
-          "type": "s",
-          "pid": 1,
-          "qty": 100,
-          "lp": 0,
-          "clp": false,
-          "cpo": 0,
-          "ccp": false,
-          "calc": {
-            "name": "淨淨剋菌液500ML",
-            "cp": 310,
-            "dCp": 310,
-            "lp": 790,
-            "dLive": 790,
-            "retail": 790,
-            "vendorProfit": 480,
-            "vendorMargin": 0.6075949367088608,
-            "netRevenue": 31000,
-            "totalCost": 3948,
-            "netProfit": 27052,
-            "netMargin": 0.8726451612903225,
-            "commAmt": 0,
-            "perShip": 0
-          }
-        }
-      ]
-    },
-    {
-      "id": 1775999741152,
-      "name": "115範例",
-      "client": "阿清",
-      "commission": 0,
-      "date": "2026-04-12",
-      "year": 2026,
-      "month": 4,
-      "totalRevenue": 270000,
-      "totalCost": 142296,
-      "totalProfit": 127704,
-      "totalMargin": 0.4729777777777778,
-      "shipping": 0,
-      "shipMode": "lump",
-      "rows": [
-        {
-          "type": "s",
-          "pid": 1,
-          "qty": 100,
-          "lp": 0,
-          "clp": false,
-          "cpo": 0,
-          "ccp": false,
-          "calc": {
-            "name": "淨淨剋菌液500ML",
-            "cp": 310,
-            "dCp": 310,
-            "lp": 790,
-            "dLive": 790,
-            "retail": 790,
-            "vendorProfit": 480,
-            "vendorMargin": 0.6075949367088608,
-            "netRevenue": 31000,
-            "totalCost": 3948,
-            "netProfit": 27052,
-            "netMargin": 0.8726451612903225,
+            "name": "胺基酸多效軟管牙膏(清涼薄荷) 150g",
+            "cp": 100,
+            "dCp": 100,
+            "lp": 142,
+            "dLive": 142,
+            "unitCost": 63,
+            "retail": 219,
+            "vendorProfit": 42,
+            "vendorMargin": 0.29577464788732394,
+            "netRevenue": 1000000,
+            "totalCost": 630000,
+            "netProfit": 370000,
+            "netMargin": 0.37,
             "commAmt": 0,
             "perShip": 0
           }
         },
         {
           "type": "c",
-          "cid": 1,
-          "qty": 100,
+          "cid": 12,
+          "qty": 1,
           "lp": 0,
           "clp": false,
           "cpo": 0,
           "ccp": false,
           "calc": {
-            "name": "洗衣精2+2（壓頭+補充）",
-            "cp": 1040,
-            "dCp": 1040,
-            "lp": 2100,
-            "dLive": 2100,
-            "retail": 2100,
-            "vendorProfit": 1060,
-            "vendorMargin": 0.5047619047619047,
-            "netRevenue": 104000,
-            "totalCost": 67200,
-            "netProfit": 36800,
-            "netMargin": 0.35384615384615387,
+            "name": "洗衣精 (瓶蓋版*3+單壓頭*1)",
+            "cp": 750,
+            "dCp": 750,
+            "lp": 1008,
+            "dLive": 1008,
+            "unitCost": 498,
+            "retail": 1550,
+            "vendorProfit": 258,
+            "vendorMargin": 0.25595238095238093,
+            "netRevenue": 750,
+            "totalCost": 498,
+            "netProfit": 252,
+            "netMargin": 0.336,
             "commAmt": 0,
             "perShip": 0
           }
         },
         {
           "type": "c",
-          "cid": 1,
-          "qty": 100,
+          "cid": 13,
+          "qty": 1,
           "lp": 0,
           "clp": false,
           "cpo": 0,
           "ccp": false,
           "calc": {
-            "name": "洗衣精2+2（壓頭+補充）",
-            "cp": 1040,
-            "dCp": 1040,
-            "lp": 2100,
-            "dLive": 2100,
-            "retail": 2100,
-            "vendorProfit": 1060,
-            "vendorMargin": 0.5047619047619047,
-            "netRevenue": 104000,
-            "totalCost": 67200,
-            "netProfit": 36800,
-            "netMargin": 0.35384615384615387,
+            "name": "洗衣精 (瓶蓋版*6+單壓頭*2) 贈潔顏慕斯150ml*1",
+            "cp": 1620,
+            "dCp": 1620,
+            "lp": 2080,
+            "dLive": 2080,
+            "unitCost": 1119,
+            "retail": 3200,
+            "vendorProfit": 460,
+            "vendorMargin": 0.22115384615384615,
+            "netRevenue": 1620,
+            "totalCost": 1119,
+            "netProfit": 501,
+            "netMargin": 0.30925925925925923,
             "commAmt": 0,
             "perShip": 0
           }
         },
         {
-          "type": "s",
-          "pid": 1,
-          "qty": 100,
+          "type": "c",
+          "cid": 14,
+          "qty": 1000,
           "lp": 0,
           "clp": false,
           "cpo": 0,
           "ccp": false,
           "calc": {
-            "name": "淨淨剋菌液500ML",
-            "cp": 310,
-            "dCp": 310,
-            "lp": 790,
-            "dLive": 790,
-            "retail": 790,
-            "vendorProfit": 480,
-            "vendorMargin": 0.6075949367088608,
-            "netRevenue": 31000,
-            "totalCost": 3948,
-            "netProfit": 27052,
-            "netMargin": 0.8726451612903225,
+            "name": "洗衣精(瓶蓋版*9+單壓頭*3) 贈沐浴露棉花香*1+剋菌液300ml*1",
+            "cp": 2525,
+            "dCp": 2525,
+            "lp": 3445,
+            "dLive": 3445,
+            "unitCost": 1750.6,
+            "retail": 5300,
+            "vendorProfit": 920,
+            "vendorMargin": 0.26705370101596515,
+            "netRevenue": 2525000,
+            "totalCost": 1750600,
+            "netProfit": 774400,
+            "netMargin": 0.3066930693069307,
             "commAmt": 0,
             "perShip": 0
+          }
+        },
+        {
+          "type": "c",
+          "cid": 15,
+          "qty": 1000,
+          "lp": 1365,
+          "clp": true,
+          "cpo": 0,
+          "ccp": false,
+          "calc": {
+            "name": "家事清潔組 (除垢瓶蓋版*3+家事皂700ml*1) 贈 單噴槍*1+家事皂分裝瓶*1+除黴凝膠150ml*1",
+            "cp": 1065,
+            "dCp": 1065,
+            "lp": 1365,
+            "dLive": 1305,
+            "unitCost": 537.915,
+            "retail": 2008,
+            "vendorProfit": 300,
+            "vendorMargin": 0.21978021978021978,
+            "netRevenue": 1065000,
+            "totalCost": 537915,
+            "netProfit": 527085,
+            "netMargin": 0.4949154929577465,
+            "commAmt": 0,
+            "perShip": 0
+          }
+        },
+        {
+          "type": "c",
+          "cid": 16,
+          "qty": 1000,
+          "lp": 0,
+          "clp": false,
+          "cpo": 0,
+          "ccp": false,
+          "calc": {
+            "name": "沐浴露(棉花/療癒花語)+ 水凝乳300ml (贈無泡潔顏露 150ml*1",
+            "cp": 1680,
+            "dCp": 1680,
+            "lp": 2308,
+            "dLive": 2308,
+            "unitCost": 582.494,
+            "retail": 3550,
+            "vendorProfit": 628,
+            "vendorMargin": 0.2720970537261698,
+            "netRevenue": 1680000,
+            "totalCost": 582494,
+            "netProfit": 1097506,
+            "netMargin": 0.653277380952381,
+            "commAmt": 0,
+            "perShip": 0
+          }
+        },
+        {
+          "type": "c",
+          "qty": 1000,
+          "clp": false,
+          "ccp": false,
+          "cid": 17,
+          "calc": {
+            "name": "水凝乳300ML | 2入組",
+            "cp": 760,
+            "retail": 1500,
+            "lp": 999,
+            "baseLp": 1500,
+            "unitCost": 399.588,
+            "totalCost": 399588,
+            "netRevenue": 760000,
+            "commAmt": 0,
+            "netProfit": 360412,
+            "netMargin": 0.47422631578947366,
+            "vendorProfit": 239,
+            "vendorMargin": 0.23923923923923923
           }
         }
       ]
     }
   ],
-  "savedAt": "2026-04-15T13:43:35.170700Z"
+  "savedAt": "2026-04-17T03:42:38.475Z"
 };
