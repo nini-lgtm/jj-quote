@@ -387,16 +387,24 @@ async function saveToGitHub(content){
   const api='https://api.github.com';
   const path='data.js';
   const headers={'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json','User-Agent':'cleanclean-channel'};
-  let sha=null;
-  try{
-    const r=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path+'?ref='+_GH.branch,{headers});
-    if(r.ok){const j=await r.json();sha=j.sha;}
-  }catch(e){}
-  const b64=btoa(unescape(encodeURIComponent(content)));
-  const body={message:'更新報價資料 '+new Date().toLocaleString('zh-TW'),content:b64,branch:_GH.branch};
-  if(sha)body.sha=sha;
-  const r2=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path,{method:'PUT',headers,body:JSON.stringify(body)});
-  if(!r2.ok){
+  // 最多重試 3 次（處理同時存檔的 SHA 衝突）
+  for(let attempt=0;attempt<3;attempt++){
+    let sha=null;
+    try{
+      const r=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path+'?ref='+_GH.branch,{headers});
+      if(r.ok){const j=await r.json();sha=j.sha;}
+    }catch(e){}
+    const b64=btoa(unescape(encodeURIComponent(content)));
+    const body={message:'更新報價資料 '+new Date().toLocaleString('zh-TW'),content:b64,branch:_GH.branch};
+    if(sha)body.sha=sha;
+    const r2=await fetch(api+'/repos/'+_GH.user+'/'+_GH.repo+'/contents/'+path,{method:'PUT',headers,body:JSON.stringify(body)});
+    if(r2.ok)return true;
+    if(r2.status===409&&attempt<2){
+      // SHA 衝突 = 同事剛存過，重拉 SHA 重試
+      console.log('SHA conflict (409), retrying... attempt '+(attempt+2));
+      await new Promise(r=>setTimeout(r,500*(attempt+1)));
+      continue;
+    }
     if(r2.status===401||r2.status===403){localStorage.removeItem('jj_gh_token');throw new Error('Token 無效或過期，請重新儲存時輸入新的 Token');}
     const t=await r2.text();throw new Error('GitHub API 錯誤 '+r2.status+': '+t);
   }
