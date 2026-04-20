@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 // 版本號 — 每次部署自動更新，用於強制瀏覽器抓最新版
-window._APP_VER = '20260420v1600';
+window._APP_VER = '20260420v1605';
 // 如果 URL 沒帶 v 或版本太舊，加上 cache-bust 重新載入
 (function(){
   if(location.protocol==='file:')return;// 本機不需要
@@ -612,10 +612,10 @@ const[syncStatus,setSyncStatus]=useState('');
 const[menuOpen,setMenuOpen]=useState(false);
 const autoSaveTimer=useRef(null);
 
-// 靜默自動儲存（不跳密碼、不跳 alert）
+// 靜默自動儲存（不跳密碼、不跳 alert；失敗會在畫面上紅色警示）
 const autoSave=async()=>{
-  if(!_admin)return;// 尚未驗證管理員，略過
-  if(!getGHToken())return;// 沒 token 不做
+  if(!_admin){setSyncStatus('🔒 未驗管理員，自動儲存停用｜請手動儲存');return;}
+  if(!getGHToken()){setSyncStatus('⚠️ 未設 GitHub Token，資料只存在本機！請按「💾 儲存」設定');return;}
   try{
     setSyncStatus('💾 自動儲存中...');
     const cloud=await fetchCloudData();
@@ -634,8 +634,14 @@ const autoSave=async()=>{
     setSyncStatus('✅ 已自動儲存 '+new Date().toLocaleTimeString('zh-TW').slice(0,5));
     setTimeout(()=>setSyncStatus(s=>s.startsWith('✅')?'':s),5000);
   }catch(e){
-    setSyncStatus('⚠️ 自動儲存失敗');
-    console.warn('autoSave',e);
+    // 失敗要大聲！不能靜默，不然同事會以為存好了其實沒上雲
+    setSyncStatus('❌ 雲端儲存失敗！資料只在本機，關瀏覽器會遺失！錯誤:'+(e.message||'').slice(0,60));
+    console.error('autoSave FAILED',e);
+    // 跳 alert 提醒（第一次失敗才跳，避免連續打擾）
+    if(!window._autoSaveAlerted){
+      window._autoSaveAlerted=true;
+      alert('⚠️ 自動儲存失敗！\n\n錯誤：'+(e.message||'未知')+'\n\n請馬上：\n1. 右上選單 → 📦 下載 ZIP 備份\n2. 然後按 💾 儲存 重新輸入 Token\n\n否則資料只存在本機，關瀏覽器就遺失！');
+    }
   }
 };
 
