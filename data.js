@@ -1,5 +1,5 @@
 // 淨淨報價系統 - 資料儲存檔
-// 同步自同事 4/20 備份 2026-04-20 16:04
+// 同步自同事 4/22 備份 2026-04-22 12:50
 window.JJ_DATA = {
   "p": [
     {
@@ -4348,8 +4348,105 @@ window.JJ_DATA = {
           }
         }
       ]
+    },
+    {
+      "id": 1776833005895,
+      "name": "1150428阿清直播",
+      "client": "阿清服飾",
+      "commission": 0,
+      "tier": "sp",
+      "liveRate": 1,
+      "date": "2026-04-28",
+      "year": 2026,
+      "month": 4,
+      "totalRevenue": 2340000,
+      "totalCost": 1185982,
+      "totalProfit": 1154018,
+      "totalMargin": 0.49317008547008545,
+      "shipping": 0,
+      "shipMode": "lump",
+      "rows": [
+        {
+          "type": "s",
+          "pid": 5,
+          "qty": 6000,
+          "lp": 0,
+          "clp": false,
+          "cpo": 0,
+          "ccp": false,
+          "calc": {
+            "name": "淨淨速效除垢慕斯 補充瓶",
+            "cp": 190,
+            "dCp": 190,
+            "lp": 370,
+            "dLive": 370,
+            "unitCost": 93.9,
+            "retail": 370,
+            "vendorProfit": 180,
+            "vendorMargin": 0.4864864864864865,
+            "netRevenue": 1140000,
+            "totalCost": 563400,
+            "netProfit": 576600,
+            "netMargin": 0.5057894736842106,
+            "commAmt": 0,
+            "perShip": 0
+          }
+        },
+        {
+          "type": "s",
+          "pid": 6,
+          "qty": 2000,
+          "lp": 0,
+          "clp": false,
+          "cpo": 0,
+          "ccp": false,
+          "calc": {
+            "name": "淨淨速效除垢慕斯 噴槍(獨賣)",
+            "cp": 0,
+            "dCp": 0,
+            "lp": 59,
+            "dLive": 59,
+            "unitCost": 11.6,
+            "retail": 59,
+            "vendorProfit": 59,
+            "vendorMargin": 1,
+            "netRevenue": 0,
+            "totalCost": 23200,
+            "netProfit": -23200,
+            "netMargin": 0,
+            "commAmt": 0,
+            "perShip": 0
+          }
+        },
+        {
+          "type": "s",
+          "pid": 18,
+          "qty": 3000,
+          "lp": 0,
+          "clp": false,
+          "cpo": 0,
+          "ccp": false,
+          "calc": {
+            "name": "植潤水凝乳 300ml",
+            "cp": 400,
+            "dCp": 400,
+            "lp": 750,
+            "dLive": 750,
+            "unitCost": 199.794,
+            "retail": 750,
+            "vendorProfit": 350,
+            "vendorMargin": 0.4666666666666667,
+            "netRevenue": 1200000,
+            "totalCost": 599382,
+            "netProfit": 600618,
+            "netMargin": 0.500515,
+            "commAmt": 0,
+            "perShip": 0
+          }
+        }
+      ]
     }
   ],
-  "exportDate": "2026-04-20T07:53:05.466Z",
-  "savedAt": "2026-04-20T16:04:51.597001"
+  "exportDate": "2026-04-22T04:48:59.739Z",
+  "savedAt": "2026-04-22T12:50:00.219706"
 };
