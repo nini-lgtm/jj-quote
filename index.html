@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 // 版本號 — 每次部署自動更新，用於強制瀏覽器抓最新版
-window._APP_VER = '20260421v2000';
+window._APP_VER = '20260422v1313';
 // 如果 URL 沒帶 v 或版本太舊，加上 cache-bust 重新載入
 (function(){
   if(location.protocol==='file:')return;// 本機不需要
@@ -21,8 +21,19 @@ window._APP_VER = '20260421v2000';
   }
 })();
 </script>
-<script src="./data.js" onerror="window.JJ_DATA=null"></script>
-<script src="./master.js" onerror="window.JJ_MASTER=null"></script>
+<script>
+// 動態載入 data.js/master.js，加時間戳避免快取問題
+(function(){
+  if(location.protocol==='file:'){
+    document.write('<scr'+'ipt src="./data.js" onerror="window.JJ_DATA=null"></scr'+'ipt>');
+    document.write('<scr'+'ipt src="./master.js" onerror="window.JJ_MASTER=null"></scr'+'ipt>');
+    return;
+  }
+  var t=Date.now();
+  document.write('<scr'+'ipt src="./data.js?t='+t+'" onerror="window.JJ_DATA=null"></scr'+'ipt>');
+  document.write('<scr'+'ipt src="./master.js?t='+t+'" onerror="window.JJ_MASTER=null"></scr'+'ipt>');
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
