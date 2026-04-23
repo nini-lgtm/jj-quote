@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 // 版本號 — 每次部署自動更新，用於強制瀏覽器抓最新版
-window._APP_VER = '20260422v2000';
+window._APP_VER = '20260423v0959';
 // 如果 URL 沒帶 v 或版本太舊，加上 cache-bust 重新載入
 (function(){
   if(location.protocol==='file:')return;// 本機不需要
@@ -401,21 +401,30 @@ async function fetchCloudData(){
     return d;
   }catch(e){console.warn('fetchCloudData',e);return null}
 }
-// 智慧合併：events/clients 用 ID 去重合併（雙方都保留），products/combos 以本機為準
+// 追蹤本機刪除的 ID（避免合併時從雲端拉回來）
+const _deletedIds={p:new Set(),c:new Set(),cl:new Set(),ev:new Set()};
+
+// 智慧合併：本機刪除的 ID 不會從雲端回來；其他情況雙方合併（local 覆蓋 cloud）
 function mergeData(local,cloud){
   if(!cloud)return local;
-  const mergeById=(a=[],b=[])=>{
+  const mergeById=(a=[],b=[],kind)=>{
     const map=new Map();
     [...b,...a].forEach(x=>{if(x&&x.id!=null)map.set(x.id,x)});
-    return Array.from(map.values());
+    const del=_deletedIds[kind]||new Set();
+    return Array.from(map.values()).filter(x=>!del.has(x.id));
   };
   return{
-    p:local.p,  // 產品以本機為主
-    c:local.c,  // 組合以本機為主
-    cl:mergeById(local.cl,cloud.cl),  // 客戶合併（雙方都保留）
-    ev:mergeById(local.ev,cloud.ev),  // 場次合併（雙方都保留）
+    p:mergeById(local.p,cloud.p,'p'),
+    c:mergeById(local.c,cloud.c,'c'),
+    cl:mergeById(local.cl,cloud.cl,'cl'),
+    ev:mergeById(local.ev,cloud.ev,'ev'),
     savedAt:local.savedAt
   };
+}
+// 成功存雲端後清除刪除記錄（雲端已同步）
+function clearDeletedIds(){
+  _deletedIds.p.clear();_deletedIds.c.clear();
+  _deletedIds.cl.clear();_deletedIds.ev.clear();
 }
 // 存到 Google Sheet (透過 Apps Script)
 // 需傳 pwdHash（管理員密碼的 SHA256）+ payload
@@ -437,6 +446,8 @@ async function saveToCloud(data){
     if((j.error||'').includes('password')){_pwdHash='';throw new Error('密碼錯誤，請重新儲存');}
     throw new Error(j.error||'未知錯誤');
   }
+  // 存雲端成功 → 刪除記錄清掉（雲端已同步刪除了）
+  clearDeletedIds();
   return j;
 }
 // 舊函式保留空殼供其他地方呼叫
@@ -508,10 +519,15 @@ const[products,_sP]=useState(()=>LD('p',P0));
 const[combos,_sC]=useState(()=>LD('c',C0));
 const[clients,_sCl]=useState(()=>LD('cl',CL0));
 const[events,_sE]=useState(()=>LD('ev',[]));
-const sP=v=>{const n=typeof v==='function'?v(products):v;_sP(n);SV('p',n);markUnsaved()};
-const sC=v=>{const n=typeof v==='function'?v(combos):v;_sC(n);SV('c',n);markUnsaved()};
-const sCl=v=>{const n=typeof v==='function'?v(clients):v;_sCl(n);SV('cl',n);markUnsaved()};
-const sE=v=>{const n=typeof v==='function'?v(events):v;_sE(n);SV('ev',n);markUnsaved()};
+// 偵測刪除：舊陣列有、新陣列沒有的 ID 就是被刪了
+const trackDel=(oldArr,newArr,kind)=>{
+  const ns=new Set((newArr||[]).map(x=>x&&x.id).filter(id=>id!=null));
+  (oldArr||[]).forEach(x=>{if(x&&x.id!=null&&!ns.has(x.id))_deletedIds[kind].add(x.id);});
+};
+const sP=v=>{const n=typeof v==='function'?v(products):v;trackDel(products,n,'p');_sP(n);SV('p',n);markUnsaved()};
+const sC=v=>{const n=typeof v==='function'?v(combos):v;trackDel(combos,n,'c');_sC(n);SV('c',n);markUnsaved()};
+const sCl=v=>{const n=typeof v==='function'?v(clients):v;trackDel(clients,n,'cl');_sCl(n);SV('cl',n);markUnsaved()};
+const sE=v=>{const n=typeof v==='function'?v(events):v;trackDel(events,n,'ev');_sE(n);SV('ev',n);markUnsaved()};
 const[saved,setSaved]=useState(true);
 const[dataSource,setDS]=useState(()=>{
   try{const s=localStorage.getItem(SK);if(s){const o=JSON.parse(s);if(o.ev&&o.ev.length>0)return'localStorage'}
